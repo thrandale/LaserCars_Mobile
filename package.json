@@ -12,8 +12,11 @@
     "watchman-clean": "watchman watch-del . && watchman watch-project ."
   },
   "dependencies": {
+    "base-64": "^1.0.0",
     "react": "18.2.0",
-    "react-native": "0.71.3"
+    "react-native": "0.71.3",
+    "react-native-ble-plx": "^2.0.3",
+    "react-native-paper": "^5.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -21,6 +24,7 @@
     "@babel/runtime": "^7.20.0",
     "@react-native-community/eslint-config": "^3.2.0",
     "@tsconfig/react-native": "^2.0.2",
+    "@types/base-64": "^1.0.0",
     "@types/jest": "^29.2.1",
     "@types/react": "^18.0.24",
     "@types/react-test-renderer": "^18.0.0",
