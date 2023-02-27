@@ -37,8 +37,6 @@
 		</dict>
 		<key>NSBluetoothAlwaysUsageDescription</key>
 		<string>$(PRODUCT_NAME) would like to use Bluetooth to connect to the cars</string>
-		<key>NSBluetoothPeripheralUsageDescription</key>
-		<string>$(PRODUCT_NAME) would like to use Bluetooth to connect to the cars</string>
 		<key>UIBackgroundModes</key>
 		<array>
 			<string>bluetooth-central</string>
