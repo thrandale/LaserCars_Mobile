@@ -5,8 +5,8 @@ import {decode, encode} from 'base-64';
 import {Button, Text, TextInput} from 'react-native-paper';
 
 const manager = new BleManager();
-const serviceUUID = '0000ff10-0000-1000-8000-00805f9b34fb';
-const characteristicUUID = '0000ff11-0000-1000-8000-00805f9b34fb';
+const serviceUUID = '00000000-6a5c-4ebb-8da6-a4471e0965ef';
+const characteristicUUID = '00000001-6a5c-4ebb-8da6-a4471e0965ef';
 
 const deviceName = 'Laser Car';
 
