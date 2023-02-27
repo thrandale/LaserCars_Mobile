@@ -1,66 +1,81 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {Keyboard, StyleSheet, View} from 'react-native';
 import {BleManager, Device} from 'react-native-ble-plx';
-import {encode} from 'base-64';
+import {decode, encode} from 'base-64';
 import {Button, Text, TextInput} from 'react-native-paper';
 
 const manager = new BleManager();
-const serviceUUID = 'FFE0';
-const characteristicUUID = 'FFE1';
+const serviceUUID = '0000ff10-0000-1000-8000-00805f9b34fb';
+const characteristicUUID = '0000ff11-0000-1000-8000-00805f9b34fb';
+
+const deviceName = 'Laser Car';
 
 export default function BLE(): JSX.Element {
   const [activeDevice, setActiveDevice] = useState<Device | null>(null);
   const [message, setMessage] = useState<string>('');
+  const [valueReceived, setValueReceived] = useState<string>('');
+  const [isConnected, setIsConnected] = useState<boolean>(false);
 
-  useEffect(() => {
-    const subscription = manager.onStateChange(state => {
-      if (state === 'PoweredOn') {
-        console.log('BLE powered on');
-        manager.connectedDevices([serviceUUID]).then(devices => {
-          if (devices.length > 0) {
-            devices.forEach(device => {
-              console.log('Connecting to existing device...');
-              device.connect().then(d => {
-                console.log('Connected to ' + d.name);
-                setActiveDevice(d);
-                return device.discoverAllServicesAndCharacteristics();
-              });
-            });
-          } else {
-            scanAndConnect();
-          }
-        });
-      }
-    }, true);
-    return () => subscription.remove();
+  // Discovers services and characteristics
+  const discover = useCallback(async (d: Device) => {
+    console.log('Discovering services and characteristics...');
+    const device = await d.discoverAllServicesAndCharacteristics();
+    setActiveDevice(device);
+    setIsConnected(true);
+    console.log('Discovered services and characteristics');
   }, []);
 
-  function scanAndConnect() {
+  // Scans for the device and connects to it
+  const scanAndConnect = useCallback(async () => {
     console.log('Scanning...');
-    manager.startDeviceScan([serviceUUID], null, (error, device) => {
+    manager.startDeviceScan(null, null, (error, device) => {
       if (error) {
         console.log(error);
         return;
       }
 
-      if (device && device.name === 'HMSoft') {
-        console.log('Found HMSoft');
+      if (device && device.name === deviceName) {
+        console.log(`Found ${deviceName}`);
         manager.stopDeviceScan();
         device
           .connect()
           .then(d => {
-            console.log('Connected to HMSoft');
-            setActiveDevice(d);
-            return device.discoverAllServicesAndCharacteristics();
+            console.log(`Connected to ${deviceName}`);
+            discover(d);
           })
           .catch(e => {
             console.log(e);
           });
       }
     });
-  }
+  }, [discover]);
 
-  function send() {
+  useEffect(() => {
+    const subscription = manager.onStateChange(state => {
+      if (state === 'PoweredOn') {
+        console.log('BLE powered on');
+        // check for existing connections
+        manager.connectedDevices([serviceUUID]).then(devices => {
+          if (devices.length > 0) {
+            devices.forEach(device => {
+              console.log('Connecting to existing device...');
+              device.connect().then(d => {
+                console.log('Connected to ' + d.name);
+                discover(d);
+              });
+            });
+          } else {
+            // otherwise scan and connect
+            scanAndConnect();
+          }
+        });
+      }
+    }, true);
+    return () => subscription.remove();
+  }, [discover, scanAndConnect]);
+
+  // Send a message to the device
+  const send = () => {
     Keyboard.dismiss();
     if (activeDevice) {
       let messageToSend = message ? message : 'Hello World!';
@@ -80,7 +95,30 @@ export default function BLE(): JSX.Element {
           console.log(e);
         });
     }
-  }
+  };
+
+  useEffect(() => {
+    // monitor for changes to the characteristic
+    if (!isConnected || !activeDevice) {
+      return;
+    }
+
+    manager.monitorCharacteristicForDevice(
+      activeDevice.id,
+      serviceUUID,
+      characteristicUUID,
+      (error, characteristic) => {
+        if (error) {
+          console.log(error);
+          return;
+        }
+        if (characteristic && characteristic.value) {
+          let decodedValue = decode(characteristic.value);
+          setValueReceived(decodedValue);
+        }
+      },
+    );
+  }, [isConnected, activeDevice]);
 
   return (
     <View style={styles.sendContainer}>
@@ -99,6 +137,7 @@ export default function BLE(): JSX.Element {
       {/* <Button mode="contained" onPress={scanAndConnect}>
         Scan and Connect
       </Button> */}
+      <Text variant="titleLarge">Value: {valueReceived}</Text>
     </View>
   );
 }
