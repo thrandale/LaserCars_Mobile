@@ -6,7 +6,8 @@ import {Button, Text, TextInput} from 'react-native-paper';
 
 const manager = new BleManager();
 const serviceUUID = '00000000-6a5c-4ebb-8da6-a4471e0965ef';
-const characteristicUUID = '00000001-6a5c-4ebb-8da6-a4471e0965ef';
+const characteristic1 = '00000001-6a5c-4ebb-8da6-a4471e0965ef';
+const characteristic2 = '00000002-6a5c-4ebb-8da6-a4471e0965ef';
 
 const deviceName = 'Laser Car';
 
@@ -75,20 +76,21 @@ export default function BLE(): JSX.Element {
   }, [discover, scanAndConnect]);
 
   // Send a message to the device
-  const send = () => {
+  const send = (char: number) => {
     Keyboard.dismiss();
     if (activeDevice) {
-      let messageToSend = message ? message : 'Hello World!';
-      let encodedMessage = encode(messageToSend + '\0');
+      const characteristic = char === 1 ? characteristic1 : characteristic2;
+      const messageToSend = message ? message : 'Hello World!';
+      const encodedMessage = encode(messageToSend + '\0');
       manager
         .writeCharacteristicWithoutResponseForDevice(
           activeDevice.id,
           serviceUUID,
-          characteristicUUID,
+          characteristic,
           encodedMessage,
         )
         .then(() => {
-          console.log('Sent: ' + messageToSend);
+          console.log('Sent: ' + messageToSend + ' to characteristic ' + char);
           setMessage('');
         })
         .catch(e => {
@@ -106,7 +108,7 @@ export default function BLE(): JSX.Element {
     manager.monitorCharacteristicForDevice(
       activeDevice.id,
       serviceUUID,
-      characteristicUUID,
+      characteristic1,
       (error, characteristic) => {
         if (error) {
           console.log(error);
@@ -128,16 +130,16 @@ export default function BLE(): JSX.Element {
         value={message}
         onChangeText={setMessage}
         mode="outlined"
-        onSubmitEditing={send}
+        onSubmitEditing={() => send(1)}
         accessibilityLabel={undefined}
       />
-      <Button mode="contained" onPress={send}>
-        Send
+      <Button mode="contained" onPress={() => send(1)} disabled={!activeDevice}>
+        Send to 1
       </Button>
-      {/* <Button mode="contained" onPress={scanAndConnect}>
-        Scan and Connect
-      </Button> */}
-      <Text variant="titleLarge">Value: {valueReceived}</Text>
+      <Button mode="contained" onPress={() => send(2)} disabled={!activeDevice}>
+        Send to 2
+      </Button>
+      <Text variant="titleLarge">Char 1 value: {valueReceived}</Text>
     </View>
   );
 }
