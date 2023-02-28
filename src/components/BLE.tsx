@@ -122,7 +122,7 @@ export default function BLE(): JSX.Element {
 
   return (
     <View style={styles.sendContainer}>
-      <Text variant="titleLarge">Send Message to: {activeDevice?.name}</Text>
+      <Text variant="titleLarge">Connected To: {activeDevice?.name}</Text>
       <TextInput
         label="Message"
         value={message}
