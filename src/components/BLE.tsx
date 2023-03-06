@@ -81,7 +81,7 @@ export default function BLE(): JSX.Element {
     if (activeDevice) {
       const characteristic = char === 1 ? characteristic1 : characteristic2;
       const messageToSend = message ? message : 'Hello World!';
-      const encodedMessage = encode(messageToSend + '\0');
+      const encodedMessage = encode(messageToSend);
       manager
         .writeCharacteristicWithoutResponseForDevice(
           activeDevice.id,
