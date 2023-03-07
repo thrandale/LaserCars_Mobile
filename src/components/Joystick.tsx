@@ -104,28 +104,30 @@ class Joystick extends React.Component<JoystickProps> {
   }
 }
 
+const {outerRadius, innerRadius} = Joystick.joystickSize;
+
 const styles = StyleSheet.create({
   textContainer: {
     position: 'absolute',
     top: -50,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: Joystick.joystickSize.outerRadius * 2 - outerLineWidth * 2,
+    width: outerRadius * 2 - outerLineWidth * 2,
   },
   touchArea: {
     position: 'absolute',
     boxSizing: 'border-box',
-    width: Joystick.joystickSize.outerRadius * 2,
-    height: Joystick.joystickSize.outerRadius * 2,
-    borderRadius: Joystick.joystickSize.outerRadius,
+    width: outerRadius * 2,
+    height: outerRadius * 2,
+    borderRadius: outerRadius,
     borderWidth: outerLineWidth,
     borderColor: outerColor,
   },
   stick: {
     position: 'absolute',
-    width: Joystick.joystickSize.innerRadius * 2,
-    height: Joystick.joystickSize.innerRadius * 2,
-    borderRadius: Joystick.joystickSize.innerRadius,
+    width: innerRadius * 2,
+    height: innerRadius * 2,
+    borderRadius: innerRadius,
     backgroundColor: innerColor,
     opacity: 0.8,
   },
