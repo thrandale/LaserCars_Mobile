@@ -9,12 +9,14 @@ import React from 'react';
 import {SafeAreaView, View} from 'react-native';
 
 import BLE from './components/BLE';
+import MultiTouch from './components/MultiTouch';
 
 function App(): JSX.Element {
   return (
     <SafeAreaView>
       <View>
-        <BLE />
+        {/* <BLE /> */}
+        <MultiTouch />
       </View>
     </SafeAreaView>
   );
