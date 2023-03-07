@@ -1,5 +1,6 @@
 import React from 'react';
 import {NativeTouchEvent, StyleSheet, View, ViewStyle} from 'react-native';
+import {Text} from 'react-native-paper';
 
 export interface JoystickData {
   touch: NativeTouchEvent | undefined;
@@ -69,35 +70,48 @@ class Joystick extends React.Component<JoystickProps> {
     };
 
     return (
-      <View
-        style={[
-          styles.touchArea,
-          {
-            left: joystick.globalPosition.x,
-            top: joystick.globalPosition.y,
-          },
-        ]}
-        onTouchStart={event => handleTouch(event, id)}
-        onTouchMove={event => handleTouch(event, id)}
-        onTouchEnd={event => handleRelease(event, id)}
-        onTouchCancel={event => handleRelease(event, id)}>
-        <View style={horizontalLineStyle} />
-        <View style={verticalLineStyle} />
+      <View>
         <View
           style={[
-            styles.stick,
+            styles.touchArea,
             {
-              left: joystick.stickPosition.x,
-              top: joystick.stickPosition.y,
+              left: joystick.globalPosition.x,
+              top: joystick.globalPosition.y,
             },
           ]}
-        />
+          onTouchStart={event => handleTouch(event, id)}
+          onTouchMove={event => handleTouch(event, id)}
+          onTouchEnd={event => handleRelease(event, id)}
+          onTouchCancel={event => handleRelease(event, id)}>
+          <View style={styles.textContainer}>
+            <Text>X: {joystick.value.x.toFixed(2)}</Text>
+            <Text>Y: {joystick.value.y.toFixed(2)}</Text>
+          </View>
+          <View style={horizontalLineStyle} />
+          <View style={verticalLineStyle} />
+          <View
+            style={[
+              styles.stick,
+              {
+                left: joystick.stickPosition.x,
+                top: joystick.stickPosition.y,
+              },
+            ]}
+          />
+        </View>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  textContainer: {
+    position: 'absolute',
+    top: -50,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: Joystick.joystickSize.outerRadius * 2 - outerLineWidth * 2,
+  },
   touchArea: {
     position: 'absolute',
     boxSizing: 'border-box',
