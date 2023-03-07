@@ -1,5 +1,5 @@
 import React from 'react';
-import {NativeTouchEvent, StyleSheet, View, ViewStyle} from 'react-native';
+import {NativeTouchEvent, StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-paper';
 
 export interface JoystickData {
@@ -52,22 +52,6 @@ class Joystick extends React.Component<JoystickProps> {
 
   render() {
     const {joystick, handleTouch, handleRelease, id} = this.props;
-    const {outerRadius} = Joystick.joystickSize;
-
-    const horizontalLineStyle: ViewStyle = {
-      position: 'absolute',
-      top: outerRadius - innerLineWidth / 2 - outerLineWidth,
-      width: outerRadius * 2 - outerLineWidth * 2,
-      height: innerLineWidth,
-      backgroundColor: outerColor,
-    };
-    const verticalLineStyle: ViewStyle = {
-      position: 'absolute',
-      left: outerRadius - innerLineWidth / 2 - outerLineWidth,
-      width: innerLineWidth,
-      height: (outerRadius - outerLineWidth) * 2,
-      backgroundColor: outerColor,
-    };
 
     return (
       <View>
@@ -87,8 +71,8 @@ class Joystick extends React.Component<JoystickProps> {
             <Text>X: {joystick.value.x.toFixed(2)}</Text>
             <Text>Y: {joystick.value.y.toFixed(2)}</Text>
           </View>
-          <View style={horizontalLineStyle} />
-          <View style={verticalLineStyle} />
+          <View style={[styles.line, styles.horizontal]} />
+          <View style={[styles.line, styles.vertical]} />
           <View
             style={[
               styles.stick,
@@ -116,7 +100,6 @@ const styles = StyleSheet.create({
   },
   touchArea: {
     position: 'absolute',
-    boxSizing: 'border-box',
     width: outerRadius * 2,
     height: outerRadius * 2,
     borderRadius: outerRadius,
@@ -124,12 +107,25 @@ const styles = StyleSheet.create({
     borderColor: outerColor,
   },
   stick: {
-    position: 'absolute',
     width: innerRadius * 2,
     height: innerRadius * 2,
     borderRadius: innerRadius,
     backgroundColor: innerColor,
     opacity: 0.8,
+  },
+  line: {
+    position: 'absolute',
+    backgroundColor: outerColor,
+  },
+  horizontal: {
+    top: outerRadius - innerLineWidth / 2 - outerLineWidth,
+    width: outerRadius * 2 - outerLineWidth * 2,
+    height: innerLineWidth,
+  },
+  vertical: {
+    left: outerRadius - innerLineWidth / 2 - outerLineWidth,
+    width: innerLineWidth,
+    height: (outerRadius - outerLineWidth) * 2,
   },
 });
 
