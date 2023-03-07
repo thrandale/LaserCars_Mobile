@@ -94,9 +94,10 @@ const styles = StyleSheet.create({
   textContainer: {
     position: 'absolute',
     top: -50,
+    left: -outerLineWidth,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: outerRadius * 2 - outerLineWidth * 2,
+    width: outerRadius * 2,
   },
   touchArea: {
     position: 'absolute',
