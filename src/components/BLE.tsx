@@ -149,8 +149,6 @@ const styles = StyleSheet.create({
     padding: 30,
     paddingBottom: 150,
     display: 'flex',
-    width: '100%',
-    height: '100%',
     gap: 20,
     justifyContent: 'center',
   },
