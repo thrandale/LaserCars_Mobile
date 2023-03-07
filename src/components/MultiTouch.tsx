@@ -8,7 +8,7 @@ import {
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Joystick, {JoystickData} from './Joystick';
 
-const {outerRadius} = Joystick.joystickSize;
+const {outerRadius, innerRadius} = Joystick.joystickSize;
 const initialStickPos = Joystick.initialStickPos;
 
 export default function MultiTouch(): JSX.Element {
@@ -21,7 +21,10 @@ export default function MultiTouch(): JSX.Element {
     {
       touch: undefined,
       offset: {x: 0, y: 0},
-      globalPosition: {x: 0, y: height - outerRadius * 2},
+      globalPosition: {
+        x: innerRadius,
+        y: height - outerRadius * 2 - innerRadius,
+      },
       stickPosition: initialStickPos,
       value: {x: 0, y: 0},
     },
@@ -29,8 +32,8 @@ export default function MultiTouch(): JSX.Element {
       touch: undefined,
       offset: {x: 0, y: 0},
       globalPosition: {
-        x: width - outerRadius * 2,
-        y: height - outerRadius * 2,
+        x: width - outerRadius * 2 - innerRadius,
+        y: height - outerRadius * 2 - innerRadius,
       },
       stickPosition: initialStickPos,
       value: {x: 0, y: 0},
