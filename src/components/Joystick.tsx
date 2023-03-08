@@ -1,57 +1,134 @@
 import React from 'react';
-import {NativeTouchEvent, StyleSheet, View} from 'react-native';
+import {
+  GestureResponderEvent,
+  NativeTouchEvent,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {Text} from 'react-native-paper';
 
 export interface JoystickData {
   touch: NativeTouchEvent | undefined;
-  offset: {x: number; y: number};
   globalPosition: {x: number; y: number};
   stickPosition: {x: number; y: number};
   value: {x: number; y: number};
 }
 
-interface JoystickProps {
-  joystick: JoystickData;
-  handleTouch: Function;
-  handleRelease: Function;
-  id: number;
+export interface JoystickProps {
+  joystickData: JoystickData;
+  handleTouch: (event: GestureResponderEvent, joystick: Joystick) => void;
+  handleRelease: (event: GestureResponderEvent, joystick: Joystick) => void;
+  key: number;
 }
 
-const outerLineWidth = 6;
-const innerLineWidth = outerLineWidth / 2;
-const outerColor = 'darkgray';
-const innerColor = 'gray';
-
 class Joystick extends React.Component<JoystickProps> {
-  static joystickSize = {
+  // static class variables
+  static readonly outerLineWidth = 6;
+  static readonly innerLineWidth = Joystick.outerLineWidth / 2;
+  static readonly outerColor = 'darkgray';
+  static readonly innerColor = 'gray';
+  static readonly joystickSize = {
     outerRadius: 75,
     innerRadius: 75 / 2,
   };
-  static initialStickPos = {
+  static readonly initialStickPos = {
     x:
       Joystick.joystickSize.outerRadius -
       Joystick.joystickSize.innerRadius -
-      outerLineWidth,
+      Joystick.outerLineWidth,
     y:
       Joystick.joystickSize.outerRadius -
       Joystick.joystickSize.innerRadius -
-      outerLineWidth,
+      Joystick.outerLineWidth,
   };
 
+  // State
+  state = {
+    joystickData: this.props.joystickData,
+  };
+
+  // Getters and Setters
+  get joystickData() {
+    return this.state.joystickData;
+  }
+
+  get touch() {
+    return this.state.joystickData.touch;
+  }
+
+  set touch(touch: NativeTouchEvent | undefined) {
+    this.setState({
+      joystickData: {
+        ...this.state.joystickData,
+        touch: touch,
+      },
+    });
+  }
+
+  get globalPosition() {
+    return this.state.joystickData.globalPosition;
+  }
+
+  get stickPosition() {
+    return this.state.joystickData.stickPosition;
+  }
+
+  set stickPosition(stickPosition: {x: number; y: number}) {
+    this.setState({
+      joystickData: {
+        ...this.state.joystickData,
+        stickPosition: stickPosition,
+      },
+    });
+  }
+
+  get value() {
+    return this.state.joystickData.value;
+  }
+
+  set value(value: {x: number; y: number}) {
+    this.setState({
+      joystickData: {
+        ...this.state.joystickData,
+        value: value,
+      },
+    });
+  }
+
+  get key() {
+    return this.props.key;
+  }
+
+  reset() {
+    // reset everything except the global position
+    this.setState({
+      joystickData: {
+        ...this.state.joystickData,
+        touch: undefined,
+        stickPosition: Joystick.initialStickPos,
+        value: {x: 0, y: 0},
+      },
+    });
+  }
+
   // update the joystick value
-  componentDidUpdate() {
-    const {joystick} = this.props;
-    const {stickPosition} = joystick;
-    const {joystickSize, initialStickPos} = Joystick;
-    // normalize the stick position to a value between -1 and 1
-    joystick.value = {
-      x: (stickPosition.x - initialStickPos.x) / joystickSize.outerRadius,
-      y: (stickPosition.y - initialStickPos.y) / joystickSize.outerRadius,
-    };
+  componentDidUpdate(prevProps: JoystickProps, prevState: JoystickProps) {
+    const {joystickData} = this.state;
+    const {stickPosition} = joystickData;
+    const {initialStickPos, joystickSize} = Joystick;
+
+    if (stickPosition !== prevState.joystickData.stickPosition) {
+      // normalize the stick position to a value between -1 and 1
+      this.value = {
+        x: (stickPosition.x - initialStickPos.x) / joystickSize.outerRadius,
+        y: (stickPosition.y - initialStickPos.y) / joystickSize.outerRadius,
+      };
+    }
   }
 
   render() {
-    const {joystick, handleTouch, handleRelease, id} = this.props;
+    const {handleTouch, handleRelease} = this.props;
+    const {globalPosition, stickPosition, value} = this.state.joystickData;
 
     return (
       <View>
@@ -59,17 +136,17 @@ class Joystick extends React.Component<JoystickProps> {
           style={[
             styles.touchArea,
             {
-              left: joystick.globalPosition.x,
-              top: joystick.globalPosition.y,
+              left: globalPosition.x,
+              top: globalPosition.y,
             },
           ]}
-          onTouchStart={event => handleTouch(event, id)}
-          onTouchMove={event => handleTouch(event, id)}
-          onTouchEnd={event => handleRelease(event, id)}
-          onTouchCancel={event => handleRelease(event, id)}>
+          onTouchStart={event => handleTouch(event, this)}
+          onTouchMove={event => handleTouch(event, this)}
+          onTouchEnd={event => handleRelease(event, this)}
+          onTouchCancel={event => handleRelease(event, this)}>
           <View style={styles.textContainer}>
-            <Text>X: {joystick.value.x.toFixed(2)}</Text>
-            <Text>Y: {joystick.value.y.toFixed(2)}</Text>
+            <Text>X: {value.x.toFixed(2)}</Text>
+            <Text>Y: {value.y.toFixed(2)}</Text>
           </View>
           <View style={[styles.line, styles.horizontal]} />
           <View style={[styles.line, styles.vertical]} />
@@ -77,8 +154,8 @@ class Joystick extends React.Component<JoystickProps> {
             style={[
               styles.stick,
               {
-                left: joystick.stickPosition.x,
-                top: joystick.stickPosition.y,
+                left: stickPosition.x,
+                top: stickPosition.y,
               },
             ]}
           />
@@ -88,6 +165,7 @@ class Joystick extends React.Component<JoystickProps> {
   }
 }
 
+const {outerLineWidth, innerLineWidth, outerColor, innerColor} = Joystick;
 const {outerRadius, innerRadius} = Joystick.joystickSize;
 
 const styles = StyleSheet.create({
