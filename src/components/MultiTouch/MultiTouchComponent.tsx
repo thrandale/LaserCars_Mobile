@@ -1,72 +1,84 @@
 import React from 'react';
 import {GestureResponderEvent, NativeTouchEvent} from 'react-native';
 
-export interface MultiTouchComponentData {
-  touch: NativeTouchEvent | undefined;
-  globalPosition: {x: number; y: number};
-  handleTouch: (
-    event: GestureResponderEvent,
-    component: MultiTouchComponent,
-  ) => void;
-  handleRelease: (
-    event: GestureResponderEvent,
-    component: MultiTouchComponent,
-  ) => void;
-  key: number;
-}
-
-export interface MultiTouchComponentProps {
-  componentData: MultiTouchComponentData;
-  [key: string]: any;
-}
-
-export interface MultiTouchComponentState {
-  componentData: MultiTouchComponentData;
-  [key: string]: any;
-}
-
-class MultiTouchComponent extends React.Component<
-  MultiTouchComponentProps,
-  MultiTouchComponentState
+export interface MultiTouchComponentData<
+  P extends MultiTouchComponentData<P, S>,
+  S extends MultiTouchComponentData<P, S>,
 > {
-  constructor(props: MultiTouchComponentProps) {
+  touchId: string | undefined;
+  globalPosition: {x: number; y: number};
+  shouldHandleTouch?: boolean;
+  windowDimensions: {
+    width: number;
+    height: number;
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
+  };
+}
+
+abstract class MultiTouchComponent<
+  P extends MultiTouchComponentData<P, S>,
+  S extends MultiTouchComponentData<P, S>,
+> extends React.Component<P, S> {
+  constructor(props: P) {
     super(props);
     this.state = {
-      componentData: this.props.componentData,
-    };
+      touchId: props.touchId,
+      globalPosition: props.globalPosition,
+      shouldHandleTouch: props.shouldHandleTouch,
+      windowDimensions: props.windowDimensions,
+    } as S;
   }
 
-  get touch() {
-    return this.state.componentData.touch;
+  get touchId() {
+    return this.state.touchId;
   }
 
-  set touch(touch: NativeTouchEvent | undefined) {
+  set touchId(touch: string | undefined) {
     this.setState({
-      componentData: {
-        ...this.state.componentData,
-        touch: touch,
-      },
+      ...this.state,
+      touchId: touch,
     });
   }
 
   get globalPosition() {
-    return this.state.componentData.globalPosition;
+    return this.state.globalPosition;
   }
 
-  get handleTouch() {
-    return this.state.componentData.handleTouch;
+  get windowDimensions() {
+    return this.state.windowDimensions;
   }
 
-  get handleRelease() {
-    return this.state.componentData.handleRelease;
+  private set shouldHandleTouch(shouldHandleTouch: boolean) {
+    this.setState({
+      ...this.state,
+      shouldHandleTouch: shouldHandleTouch,
+    });
   }
 
-  get key() {
-    return this.state.componentData.key;
+  public handleTouch(event: GestureResponderEvent) {
+    if (!this.touchId) {
+      this.touchId = event.nativeEvent.identifier;
+      this.shouldHandleTouch = true;
+    } else {
+      if (this.touchId !== event.nativeEvent.identifier) {
+        this.shouldHandleTouch = false;
+      }
+    }
   }
 
-  render() {
-    return <></>;
+  public handleRelease(event: GestureResponderEvent) {
+    const {nativeEvent} = event;
+    if (
+      this.touchId &&
+      !nativeEvent.changedTouches.find(
+        (touch: NativeTouchEvent) => touch.identifier === this.touchId,
+      )
+    ) {
+      this.touchId = undefined;
+    }
   }
 }
 

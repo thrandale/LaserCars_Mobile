@@ -1,26 +1,23 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {GestureResponderEvent, StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-paper';
 import MultiTouchComponent, {
-  MultiTouchComponentProps,
+  MultiTouchComponentData,
 } from './MultiTouchComponent';
 
-export interface JoystickData {
+export interface JoystickData
+  extends MultiTouchComponentData<JoystickData, JoystickData> {
   stickPosition: {x: number; y: number};
   value: {x: number; y: number};
 }
 
-export interface JoystickProps extends MultiTouchComponentProps {
-  joystickData: JoystickData;
-}
-
-class Joystick extends MultiTouchComponent {
-  constructor(props: JoystickProps) {
+class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
+  constructor(props: JoystickData) {
     super(props);
-
     this.state = {
       ...this.state,
-      joystickData: props.joystickData,
+      stickPosition: props.stickPosition,
+      value: props.value,
     };
   }
 
@@ -44,67 +41,83 @@ class Joystick extends MultiTouchComponent {
       Joystick.outerLineWidth,
   };
 
-  get componentData() {
-    return this.state.componentData;
-  }
-
-  get joystickData() {
-    return this.state.joystickData;
-  }
-
   get stickPosition() {
-    return this.state.joystickData.stickPosition;
+    return this.state.stickPosition;
   }
 
   set stickPosition(stickPosition: {x: number; y: number}) {
     this.setState({
       ...this.state,
-      joystickData: {
-        ...this.state.joystickData,
-        stickPosition: stickPosition,
-      },
+      stickPosition: stickPosition,
     });
   }
 
   get value() {
-    return this.state.joystickData.value;
+    return this.state.value;
   }
 
-  set value(value: {x: number; y: number}) {
+  private set value(value: {x: number; y: number}) {
     this.setState({
       ...this.state,
-      joystickData: {
-        ...this.state.joystickData,
-        value: value,
-      },
+      value: value,
     });
   }
 
-  reset() {
+  handleTouch(event: GestureResponderEvent) {
+    super.handleTouch(event);
+    const {nativeEvent} = event;
+    const delta = {
+      x:
+        nativeEvent.pageX -
+        this.windowDimensions.left -
+        Joystick.joystickSize.outerRadius -
+        this.globalPosition.x,
+      y:
+        nativeEvent.pageY -
+        this.windowDimensions.top -
+        Joystick.joystickSize.outerRadius -
+        this.globalPosition.y,
+    };
+    const radius = Math.sqrt(Math.pow(delta.x, 2) + Math.pow(delta.y, 2));
+
+    if (radius > outerRadius) {
+      // touch is outside the joystick
+      const angle = Math.atan2(delta.y, delta.x);
+      const newPosition = {
+        x: Math.cos(angle) * outerRadius + Joystick.initialStickPos.x,
+        y: Math.sin(angle) * outerRadius + Joystick.initialStickPos.y,
+      };
+      this.stickPosition = newPosition;
+    } else {
+      // touch is inside the joystick
+      const newPosition = {
+        x: delta.x + Joystick.initialStickPos.x,
+        y: delta.y + Joystick.initialStickPos.y,
+      };
+      this.stickPosition = newPosition;
+    }
+  }
+
+  public handleRelease(event: GestureResponderEvent): void {
+    super.handleRelease(event);
     this.setState({
-      componentData: {
-        ...this.state.componentData,
-        touch: undefined,
-      },
-      joystickData: {
-        ...this.state.joystickData,
-        stickPosition: Joystick.initialStickPos,
-        value: {x: 0, y: 0},
-      },
+      ...this.state,
+      stickPosition: Joystick.initialStickPos,
+      value: {x: 0, y: 0},
     });
   }
 
   // update the joystick value
-  componentDidUpdate(prevProps: JoystickProps, prevState: JoystickProps) {
-    const {joystickData} = this.state;
-    const {stickPosition} = joystickData;
+  componentDidUpdate(prevProps: JoystickData, prevState: JoystickData) {
     const {initialStickPos, joystickSize} = Joystick;
 
-    if (stickPosition !== prevState.joystickData.stickPosition) {
+    if (this.stickPosition !== prevState.stickPosition) {
       // normalize the stick position to a value between -1 and 1
       this.value = {
-        x: (stickPosition.x - initialStickPos.x) / joystickSize.outerRadius,
-        y: (stickPosition.y - initialStickPos.y) / joystickSize.outerRadius,
+        x:
+          (this.stickPosition.x - initialStickPos.x) / joystickSize.outerRadius,
+        y:
+          (this.stickPosition.y - initialStickPos.y) / joystickSize.outerRadius,
       };
     }
   }
@@ -120,10 +133,11 @@ class Joystick extends MultiTouchComponent {
               top: this.globalPosition.y,
             },
           ]}
-          onTouchStart={event => this.handleTouch(event, this)}
-          onTouchMove={event => this.handleTouch(event, this)}
-          onTouchEnd={event => this.handleRelease(event, this)}
-          onTouchCancel={event => this.handleRelease(event, this)}>
+          onTouchStart={event => this.handleTouch(event)}
+          onTouchMove={event => this.handleTouch(event)}
+          onTouchEnd={event => this.handleRelease(event)}
+          onTouchCancel={event => this.handleRelease(event)}>
+          <View style={styles.background} />
           <View style={styles.textContainer}>
             <Text>X: {this.value.x.toFixed(2)}</Text>
             <Text>Y: {this.value.y.toFixed(2)}</Text>
@@ -160,14 +174,22 @@ const styles = StyleSheet.create({
   touchArea: {
     position: 'absolute',
     width: outerRadius * 2,
-    height: outerRadius * 2,
+    aspectRatio: 1,
     borderRadius: outerRadius,
     borderWidth: outerLineWidth,
     borderColor: outerColor,
   },
+  background: {
+    position: 'absolute',
+    width: outerRadius * 2 - outerLineWidth * 2,
+    aspectRatio: 1,
+    borderRadius: outerRadius,
+    backgroundColor: outerColor,
+    opacity: 0.3,
+  },
   stick: {
     width: innerRadius * 2,
-    height: innerRadius * 2,
+    aspectRatio: 1,
     borderRadius: innerRadius,
     backgroundColor: innerColor,
     opacity: 0.8,
@@ -175,6 +197,7 @@ const styles = StyleSheet.create({
   line: {
     position: 'absolute',
     backgroundColor: outerColor,
+    opacity: 0.8,
   },
   horizontal: {
     top: outerRadius - innerLineWidth / 2 - outerLineWidth,
