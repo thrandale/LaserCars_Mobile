@@ -1,11 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {Dimensions, GestureResponderEvent, View} from 'react-native';
+import {GestureResponderEvent, View} from 'react-native';
 import WindowDimensions from '../WindowDimensions';
 import {JoystickData} from './Joystick';
 import Joystick from './Joystick';
 import MultiButton, {MultiButtonData} from './MultiButton';
-
-const {outerRadius, innerRadius} = Joystick.joystickSize;
 
 const createJoystick = (
   x: number,
@@ -39,11 +37,9 @@ const createButton = (
 
 export default function MultiTouch(): JSX.Element {
   const windowDimensions = WindowDimensions();
-  const {left, right, top, bottom} = windowDimensions;
-  const {width, height} = {
-    width: Dimensions.get('window').width - left - right,
-    height: Dimensions.get('window').height - top - bottom,
-  };
+  const {width, height} = windowDimensions;
+  const {outerRadius, innerRadius} = Joystick.joystickSize;
+
   const [joysticks, setJoysticks] = useState<Joystick[]>([]);
   const [buttons, setButtons] = useState<MultiButton[]>([]);
 
@@ -76,7 +72,7 @@ export default function MultiTouch(): JSX.Element {
         console.log('button 4 pressed');
       }),
     ]);
-  }, [height, width, windowDimensions]);
+  }, [height, width, windowDimensions, outerRadius, innerRadius]);
 
   return (
     <View>
