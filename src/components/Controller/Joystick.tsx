@@ -72,8 +72,22 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
     return this.state.angle!;
   }
 
+  private set angle(angle: number) {
+    this.setState({
+      ...this.state,
+      angle: angle,
+    });
+  }
+
   get magnitude() {
     return this.state.magnitude!;
+  }
+
+  private set magnitude(magnitude: number) {
+    this.setState({
+      ...this.state,
+      magnitude: magnitude,
+    });
   }
 
   protected handleTouch(event: GestureResponderEvent) {
@@ -92,34 +106,22 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
         this.globalPosition.y,
     };
     const radius = Math.sqrt(Math.pow(delta.x, 2) + Math.pow(delta.y, 2));
-
-    const angle = Math.atan2(delta.y, delta.x);
-    const degrees = angle * (180 / Math.PI) + 180;
+    let newPosition: {x: number; y: number};
     if (radius > outerRadius) {
       // touch is outside the joystick
-      const newPosition = {
+      const angle = Math.atan2(delta.y, delta.x);
+      newPosition = {
         x: Math.cos(angle) * outerRadius + Joystick.initialStickPos.x,
         y: Math.sin(angle) * outerRadius + Joystick.initialStickPos.y,
       };
-      this.setState({
-        ...this.state,
-        stickPosition: newPosition,
-        angle: degrees,
-        magnitude: 1,
-      });
     } else {
       // touch is inside the joystick
-      const newPosition = {
+      newPosition = {
         x: delta.x + Joystick.initialStickPos.x,
         y: delta.y + Joystick.initialStickPos.y,
       };
-      this.setState({
-        ...this.state,
-        stickPosition: newPosition,
-        angle: degrees,
-        magnitude: radius / outerRadius,
-      });
     }
+    this.stickPosition = newPosition;
   }
 
   protected handleRelease(event: GestureResponderEvent): void {
@@ -133,18 +135,26 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
     });
   }
 
-  // update the joystick value
+  // update the joystick value, angle, and magnitude
   componentDidUpdate(prevProps: JoystickData, prevState: JoystickData) {
     const {initialStickPos, joystickSize} = Joystick;
 
     if (this.stickPosition !== prevState.stickPosition) {
-      // normalize the stick position to a value between -1 and 1
-      this.value = {
-        x:
-          (this.stickPosition.x - initialStickPos.x) / joystickSize.outerRadius,
-        y:
-          (this.stickPosition.y - initialStickPos.y) / joystickSize.outerRadius,
-      };
+      this.setState({
+        ...this.state,
+        value: {
+          x:
+            (this.stickPosition.x - initialStickPos.x) /
+            joystickSize.outerRadius,
+          y:
+            (this.stickPosition.y - initialStickPos.y) /
+            joystickSize.outerRadius,
+        },
+        angle: Math.atan2(this.value.y, this.value.x) * (180 / Math.PI) + 180,
+        magnitude: Math.sqrt(
+          Math.pow(this.value.x, 2) + Math.pow(this.value.y, 2),
+        ),
+      });
     }
   }
 
@@ -162,10 +172,12 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
         onTouchMove={event => this.handleTouch(event)}
         onTouchEnd={event => this.handleRelease(event)}
         onTouchCancel={event => this.handleRelease(event)}>
-        <View style={styles.textContainer}>
+        {/* <View style={styles.textContainer}>
           <Text>A: {this.state.angle!.toFixed(2)}</Text>
           <Text>M: {this.state.magnitude!.toFixed(2)}</Text>
-        </View>
+          <Text>X: {this.state.value!.x.toFixed(2)}</Text>
+          <Text>Y: {this.state.value!.y.toFixed(2)}</Text>
+        </View> */}
         <View style={styles.background} />
         <View style={[styles.line, styles.horizontal]} />
         <View style={[styles.line, styles.vertical]} />
@@ -189,10 +201,9 @@ const {outerRadius, innerRadius} = Joystick.joystickSize;
 const styles = StyleSheet.create({
   textContainer: {
     position: 'absolute',
-    top: -50,
+    gridTemplateColumns: '1fr 1fr',
+    top: -100,
     left: -outerLineWidth,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     width: outerRadius * 2,
   },
   touchArea: {
