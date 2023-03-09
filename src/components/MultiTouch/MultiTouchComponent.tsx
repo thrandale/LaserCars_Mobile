@@ -5,7 +5,7 @@ export interface MultiTouchComponentData<
   P extends MultiTouchComponentData<P, S>,
   S extends MultiTouchComponentData<P, S>,
 > {
-  touchId: string | undefined;
+  touchId?: string | undefined;
   globalPosition: {x: number; y: number};
   shouldHandleTouch?: boolean;
   windowDimensions: {
@@ -32,33 +32,36 @@ abstract class MultiTouchComponent<
     } as S;
   }
 
-  get touchId() {
+  static readonly outerColor = 'darkgray';
+  static readonly innerColor = 'gray';
+
+  protected get touchId() {
     return this.state.touchId;
   }
 
-  set touchId(touch: string | undefined) {
+  protected set touchId(touch: string | undefined) {
     this.setState({
       ...this.state,
       touchId: touch,
     });
   }
 
-  get globalPosition() {
+  protected get globalPosition() {
     return this.state.globalPosition;
   }
 
-  get windowDimensions() {
+  protected get windowDimensions() {
     return this.state.windowDimensions;
   }
 
-  private set shouldHandleTouch(shouldHandleTouch: boolean) {
+  protected set shouldHandleTouch(shouldHandleTouch: boolean) {
     this.setState({
       ...this.state,
       shouldHandleTouch: shouldHandleTouch,
     });
   }
 
-  public handleTouch(event: GestureResponderEvent) {
+  protected handleTouch(event: GestureResponderEvent) {
     if (!this.touchId) {
       this.touchId = event.nativeEvent.identifier;
       this.shouldHandleTouch = true;
@@ -69,7 +72,7 @@ abstract class MultiTouchComponent<
     }
   }
 
-  public handleRelease(event: GestureResponderEvent) {
+  protected handleRelease(event: GestureResponderEvent) {
     const {nativeEvent} = event;
     if (
       this.touchId &&

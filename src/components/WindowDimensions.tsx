@@ -1,6 +1,6 @@
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Dimensions} from 'react-native';
-import {useCallback, useMemo} from 'react';
+import {useMemo} from 'react';
 
 interface WindowDimensions {
   width: number;

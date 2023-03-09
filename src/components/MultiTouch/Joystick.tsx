@@ -1,14 +1,13 @@
 import React from 'react';
 import {GestureResponderEvent, StyleSheet, View} from 'react-native';
-import {Text} from 'react-native-paper';
 import MultiTouchComponent, {
   MultiTouchComponentData,
 } from './MultiTouchComponent';
 
 export interface JoystickData
   extends MultiTouchComponentData<JoystickData, JoystickData> {
-  stickPosition: {x: number; y: number};
-  value: {x: number; y: number};
+  stickPosition?: {x: number; y: number};
+  value?: {x: number; y: number};
 }
 
 class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
@@ -16,16 +15,17 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
     super(props);
     this.state = {
       ...this.state,
-      stickPosition: props.stickPosition,
-      value: props.value,
+      stickPosition: props.stickPosition || {
+        x: Joystick.initialStickPos.x,
+        y: Joystick.initialStickPos.y,
+      },
+      value: props.value || {x: 0, y: 0},
     };
   }
 
   // static class variables
   static readonly outerLineWidth = 6;
   static readonly innerLineWidth = Joystick.outerLineWidth / 2;
-  static readonly outerColor = 'darkgray';
-  static readonly innerColor = 'gray';
   static readonly joystickSize = {
     outerRadius: 75,
     innerRadius: 75 / 2,
@@ -42,7 +42,7 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
   };
 
   get stickPosition() {
-    return this.state.stickPosition;
+    return this.state.stickPosition!;
   }
 
   set stickPosition(stickPosition: {x: number; y: number}) {
@@ -53,7 +53,7 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
   }
 
   get value() {
-    return this.state.value;
+    return this.state.value!;
   }
 
   private set value(value: {x: number; y: number}) {
@@ -63,7 +63,7 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
     });
   }
 
-  handleTouch(event: GestureResponderEvent) {
+  protected handleTouch(event: GestureResponderEvent) {
     super.handleTouch(event);
     const {nativeEvent} = event;
     const delta = {
@@ -98,7 +98,7 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
     }
   }
 
-  public handleRelease(event: GestureResponderEvent): void {
+  protected handleRelease(event: GestureResponderEvent): void {
     super.handleRelease(event);
     this.setState({
       ...this.state,
@@ -124,36 +124,30 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
 
   render() {
     return (
-      <View>
+      <View
+        style={[
+          styles.touchArea,
+          {
+            left: this.globalPosition.x,
+            top: this.globalPosition.y,
+          },
+        ]}
+        onTouchStart={event => this.handleTouch(event)}
+        onTouchMove={event => this.handleTouch(event)}
+        onTouchEnd={event => this.handleRelease(event)}
+        onTouchCancel={event => this.handleRelease(event)}>
+        <View style={styles.background} />
+        <View style={[styles.line, styles.horizontal]} />
+        <View style={[styles.line, styles.vertical]} />
         <View
           style={[
-            styles.touchArea,
+            styles.stick,
             {
-              left: this.globalPosition.x,
-              top: this.globalPosition.y,
+              left: this.stickPosition.x,
+              top: this.stickPosition.y,
             },
           ]}
-          onTouchStart={event => this.handleTouch(event)}
-          onTouchMove={event => this.handleTouch(event)}
-          onTouchEnd={event => this.handleRelease(event)}
-          onTouchCancel={event => this.handleRelease(event)}>
-          <View style={styles.background} />
-          <View style={styles.textContainer}>
-            <Text>X: {this.value.x.toFixed(2)}</Text>
-            <Text>Y: {this.value.y.toFixed(2)}</Text>
-          </View>
-          <View style={[styles.line, styles.horizontal]} />
-          <View style={[styles.line, styles.vertical]} />
-          <View
-            style={[
-              styles.stick,
-              {
-                left: this.stickPosition.x,
-                top: this.stickPosition.y,
-              },
-            ]}
-          />
-        </View>
+        />
       </View>
     );
   }
