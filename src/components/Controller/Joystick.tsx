@@ -1,5 +1,6 @@
 import React from 'react';
 import {GestureResponderEvent, StyleSheet, View} from 'react-native';
+import {Text} from 'react-native-paper';
 import MultiTouchComponent, {
   MultiTouchComponentData,
 } from './MultiTouchComponent';
@@ -8,6 +9,8 @@ export interface JoystickData
   extends MultiTouchComponentData<JoystickData, JoystickData> {
   stickPosition?: {x: number; y: number};
   value?: {x: number; y: number};
+  angle?: number;
+  magnitude?: number;
 }
 
 class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
@@ -19,7 +22,9 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
         x: Joystick.initialStickPos.x,
         y: Joystick.initialStickPos.y,
       },
-      value: props.value || {x: 0, y: 0},
+      value: {x: 0, y: 0},
+      angle: 0,
+      magnitude: 0,
     };
   }
 
@@ -63,6 +68,14 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
     });
   }
 
+  get angle() {
+    return this.state.angle!;
+  }
+
+  get magnitude() {
+    return this.state.magnitude!;
+  }
+
   protected handleTouch(event: GestureResponderEvent) {
     super.handleTouch(event);
     const {nativeEvent} = event;
@@ -80,21 +93,32 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
     };
     const radius = Math.sqrt(Math.pow(delta.x, 2) + Math.pow(delta.y, 2));
 
+    const angle = Math.atan2(delta.y, delta.x);
+    const degrees = angle * (180 / Math.PI) + 180;
     if (radius > outerRadius) {
       // touch is outside the joystick
-      const angle = Math.atan2(delta.y, delta.x);
       const newPosition = {
         x: Math.cos(angle) * outerRadius + Joystick.initialStickPos.x,
         y: Math.sin(angle) * outerRadius + Joystick.initialStickPos.y,
       };
-      this.stickPosition = newPosition;
+      this.setState({
+        ...this.state,
+        stickPosition: newPosition,
+        angle: degrees,
+        magnitude: 1,
+      });
     } else {
       // touch is inside the joystick
       const newPosition = {
         x: delta.x + Joystick.initialStickPos.x,
         y: delta.y + Joystick.initialStickPos.y,
       };
-      this.stickPosition = newPosition;
+      this.setState({
+        ...this.state,
+        stickPosition: newPosition,
+        angle: degrees,
+        magnitude: radius / outerRadius,
+      });
     }
   }
 
@@ -104,6 +128,8 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
       ...this.state,
       stickPosition: Joystick.initialStickPos,
       value: {x: 0, y: 0},
+      angle: 0,
+      magnitude: 0,
     });
   }
 
@@ -136,6 +162,10 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
         onTouchMove={event => this.handleTouch(event)}
         onTouchEnd={event => this.handleRelease(event)}
         onTouchCancel={event => this.handleRelease(event)}>
+        <View style={styles.textContainer}>
+          <Text>A: {this.state.angle!.toFixed(2)}</Text>
+          <Text>M: {this.state.magnitude!.toFixed(2)}</Text>
+        </View>
         <View style={styles.background} />
         <View style={[styles.line, styles.horizontal]} />
         <View style={[styles.line, styles.vertical]} />
