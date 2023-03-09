@@ -1,27 +1,29 @@
 import React from 'react';
-import {
-  GestureResponderEvent,
-  NativeTouchEvent,
-  StyleSheet,
-  View,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-paper';
+import MultiTouchComponent, {
+  MultiTouchComponentProps,
+} from './MultiTouchComponent';
 
 export interface JoystickData {
-  touch: NativeTouchEvent | undefined;
-  globalPosition: {x: number; y: number};
   stickPosition: {x: number; y: number};
   value: {x: number; y: number};
 }
 
-export interface JoystickProps {
+export interface JoystickProps extends MultiTouchComponentProps {
   joystickData: JoystickData;
-  handleTouch: (event: GestureResponderEvent, joystick: Joystick) => void;
-  handleRelease: (event: GestureResponderEvent, joystick: Joystick) => void;
-  key: number;
 }
 
-class Joystick extends React.Component<JoystickProps> {
+class Joystick extends MultiTouchComponent {
+  constructor(props: JoystickProps) {
+    super(props);
+
+    this.state = {
+      ...this.state,
+      joystickData: props.joystickData,
+    };
+  }
+
   // static class variables
   static readonly outerLineWidth = 6;
   static readonly innerLineWidth = Joystick.outerLineWidth / 2;
@@ -42,31 +44,12 @@ class Joystick extends React.Component<JoystickProps> {
       Joystick.outerLineWidth,
   };
 
-  // State
-  state = {
-    joystickData: this.props.joystickData,
-  };
+  get componentData() {
+    return this.state.componentData;
+  }
 
-  // Getters and Setters
   get joystickData() {
     return this.state.joystickData;
-  }
-
-  get touch() {
-    return this.state.joystickData.touch;
-  }
-
-  set touch(touch: NativeTouchEvent | undefined) {
-    this.setState({
-      joystickData: {
-        ...this.state.joystickData,
-        touch: touch,
-      },
-    });
-  }
-
-  get globalPosition() {
-    return this.state.joystickData.globalPosition;
   }
 
   get stickPosition() {
@@ -75,6 +58,7 @@ class Joystick extends React.Component<JoystickProps> {
 
   set stickPosition(stickPosition: {x: number; y: number}) {
     this.setState({
+      ...this.state,
       joystickData: {
         ...this.state.joystickData,
         stickPosition: stickPosition,
@@ -88,6 +72,7 @@ class Joystick extends React.Component<JoystickProps> {
 
   set value(value: {x: number; y: number}) {
     this.setState({
+      ...this.state,
       joystickData: {
         ...this.state.joystickData,
         value: value,
@@ -95,16 +80,14 @@ class Joystick extends React.Component<JoystickProps> {
     });
   }
 
-  get key() {
-    return this.props.key;
-  }
-
   reset() {
-    // reset everything except the global position
     this.setState({
+      componentData: {
+        ...this.state.componentData,
+        touch: undefined,
+      },
       joystickData: {
         ...this.state.joystickData,
-        touch: undefined,
         stickPosition: Joystick.initialStickPos,
         value: {x: 0, y: 0},
       },
@@ -127,26 +110,23 @@ class Joystick extends React.Component<JoystickProps> {
   }
 
   render() {
-    const {handleTouch, handleRelease} = this.props;
-    const {globalPosition, stickPosition, value} = this.state.joystickData;
-
     return (
       <View>
         <View
           style={[
             styles.touchArea,
             {
-              left: globalPosition.x,
-              top: globalPosition.y,
+              left: this.globalPosition.x,
+              top: this.globalPosition.y,
             },
           ]}
-          onTouchStart={event => handleTouch(event, this)}
-          onTouchMove={event => handleTouch(event, this)}
-          onTouchEnd={event => handleRelease(event, this)}
-          onTouchCancel={event => handleRelease(event, this)}>
+          onTouchStart={event => this.handleTouch(event, this)}
+          onTouchMove={event => this.handleTouch(event, this)}
+          onTouchEnd={event => this.handleRelease(event, this)}
+          onTouchCancel={event => this.handleRelease(event, this)}>
           <View style={styles.textContainer}>
-            <Text>X: {value.x.toFixed(2)}</Text>
-            <Text>Y: {value.y.toFixed(2)}</Text>
+            <Text>X: {this.value.x.toFixed(2)}</Text>
+            <Text>Y: {this.value.y.toFixed(2)}</Text>
           </View>
           <View style={[styles.line, styles.horizontal]} />
           <View style={[styles.line, styles.vertical]} />
@@ -154,8 +134,8 @@ class Joystick extends React.Component<JoystickProps> {
             style={[
               styles.stick,
               {
-                left: stickPosition.x,
-                top: stickPosition.y,
+                left: this.stickPosition.x,
+                top: this.stickPosition.y,
               },
             ]}
           />
