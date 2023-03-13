@@ -117,11 +117,14 @@ class BTController extends React.Component {
     rotation = Math.floor(rotation * 100);
 
     if (magnitude === 0 && rotation === 0) {
-      this.Send('stop', 2);
+      this.Send('stop'.padEnd(14, '0'), 2);
       return;
     }
 
-    const message = `${magnitude}:${rotation}`;
+    const m = magnitude.toString().padStart(4, '0');
+    const r = rotation.toString().padStart(4, '0');
+
+    const message = `${m};${r}`;
     this.Send(message, 2);
   }
 }
