@@ -8,7 +8,7 @@
 import React from 'react';
 import {SafeAreaView, View} from 'react-native';
 
-import BLE from './components/BLE';
+import BTController from './components/BTController';
 import MultiTouch from './components/Controller/Controller';
 
 function App(): JSX.Element {

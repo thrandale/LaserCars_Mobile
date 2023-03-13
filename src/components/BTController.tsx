@@ -9,7 +9,7 @@ const characteristic2 = '00000002-6a5c-4ebb-8da6-a4471e0965ef';
 
 const deviceName = 'Laser Car';
 
-class BLE extends React.Component {
+class BTController extends React.Component {
   activeDevice: Device | null;
   isConnected: boolean;
   constructor() {
@@ -126,4 +126,4 @@ class BLE extends React.Component {
   }
 }
 
-export default BLE;
+export default BTController;

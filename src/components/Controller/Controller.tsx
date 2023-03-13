@@ -4,7 +4,7 @@ import WindowDimensions from '../WindowDimensions';
 import {JoystickData} from './Joystick';
 import Joystick from './Joystick';
 import MultiButton, {MultiButtonData} from './MultiButton';
-import BLE from '../BLE';
+import BTController from '../BTController';
 import {Text} from 'react-native-paper';
 
 const createJoystick = (
@@ -43,7 +43,7 @@ const createButton = (
   return new MultiButton(buttonProps);
 };
 
-const BT = new BLE();
+const BT = new BTController();
 
 export default function MultiTouch(): JSX.Element {
   const windowDimensions = WindowDimensions();
