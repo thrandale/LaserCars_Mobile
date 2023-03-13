@@ -104,9 +104,9 @@ class BTController extends React.Component {
       return;
     }
 
-    const a: string = angle.toString().padStart(4, '0');
-    const m: string = magnitude.toString().padStart(4, '0');
-    const r: string = rotation.toString().padStart(4, '0');
+    const a = angle.toString().padStart(4, '0');
+    const m = magnitude.toString().padStart(4, '0');
+    const r = rotation.toString().padStart(4, '0');
 
     const message = `${a}:${m};${r}`;
     this.Send(message, 1);
