@@ -11,6 +11,8 @@ export interface JoystickData
   value?: {x: number; y: number};
   angle?: number;
   magnitude?: number;
+  lockX?: boolean;
+  lockY?: boolean;
 }
 
 class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
@@ -18,13 +20,15 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
     super(props);
     this.state = {
       ...this.state,
-      stickPosition: props.stickPosition || {
+      stickPosition: {
         x: Joystick.initialStickPos.x,
         y: Joystick.initialStickPos.y,
       },
       value: {x: 0, y: 0},
       angle: 0,
       magnitude: 0,
+      lockX: props.lockX || false,
+      lockY: props.lockY || false,
     };
   }
 
@@ -90,20 +94,30 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
     });
   }
 
-  protected handleTouch(event: GestureResponderEvent) {
-    super.handleTouch(event);
+  get lockX() {
+    return this.state.lockX!;
+  }
+
+  get lockY() {
+    return this.state.lockY!;
+  }
+
+  private handleTouch(event: GestureResponderEvent) {
+    console.log('handleTouch', this.globalPosition.x);
     const {nativeEvent} = event;
     const delta = {
-      x:
-        nativeEvent.pageX -
-        this.windowDimensions.left -
-        Joystick.joystickSize.outerRadius -
-        this.globalPosition.x,
-      y:
-        nativeEvent.pageY -
-        this.windowDimensions.top -
-        Joystick.joystickSize.outerRadius -
-        this.globalPosition.y,
+      x: this.lockX
+        ? 0
+        : nativeEvent.pageX -
+          this.windowDimensions.left -
+          Joystick.joystickSize.outerRadius -
+          this.globalPosition.x,
+      y: this.lockY
+        ? 0
+        : nativeEvent.pageY -
+          this.windowDimensions.top -
+          Joystick.joystickSize.outerRadius -
+          this.globalPosition.y,
     };
     const radius = Math.sqrt(Math.pow(delta.x, 2) + Math.pow(delta.y, 2));
     let newPosition: {x: number; y: number};

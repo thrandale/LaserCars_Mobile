@@ -9,10 +9,14 @@ const createJoystick = (
   x: number,
   y: number,
   windowDimensions: WindowDimensions,
+  lockX?: boolean,
+  lockY?: boolean,
 ) => {
   const joystickProps: JoystickData = {
     globalPosition: {x: x, y: y},
     windowDimensions: windowDimensions,
+    lockX: lockX,
+    lockY: lockY,
   };
   return new Joystick(joystickProps);
 };
@@ -50,11 +54,15 @@ export default function MultiTouch(): JSX.Element {
         0,
         height - outerRadius * 2 - innerRadius / 2,
         windowDimensions,
+        // true,
+        // false,
       ),
       createJoystick(
         width - outerRadius * 2,
         height - outerRadius * 2 - innerRadius / 2,
         windowDimensions,
+        // false,
+        // true,
       ),
     ]);
 
