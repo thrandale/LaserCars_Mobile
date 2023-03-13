@@ -43,8 +43,6 @@ const createButton = (
   return new MultiButton(buttonProps);
 };
 
-const BT = new BTController();
-
 export default function MultiTouch(): JSX.Element {
   const windowDimensions = WindowDimensions();
   const {width, height} = windowDimensions;
@@ -58,7 +56,7 @@ export default function MultiTouch(): JSX.Element {
 
   // Create 2 joysticks on mount
   useEffect(() => {
-    BT.Init();
+    BTController.init();
     setJoysticks([
       createJoystick(
         0,
@@ -103,7 +101,7 @@ export default function MultiTouch(): JSX.Element {
 
   useEffect(() => {
     console.log('Sending');
-    BT.SendMecanum(angle, magnitude, rotation);
+    BTController.sendMecanum(angle, magnitude, rotation);
   }, [angle, magnitude, rotation]);
 
   return (

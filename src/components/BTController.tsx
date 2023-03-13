@@ -9,26 +9,29 @@ const characteristic2 = '00000002-6a5c-4ebb-8da6-a4471e0965ef';
 
 const deviceName = 'Laser Car';
 
-class BTController extends React.Component {
-  activeDevice: Device | null;
-  isConnected: boolean;
-  constructor() {
-    super({});
-    this.activeDevice = null;
-    this.isConnected = false;
+abstract class BTController extends React.Component {
+  private static activeDevice: Device | null;
+  private static isConnected: boolean;
+
+  public get activeDevice() {
+    return BTController.activeDevice;
+  }
+
+  public get isConnected() {
+    return BTController.isConnected;
   }
 
   // Discovers services and characteristics
-  discover = async (d: Device) => {
+  private static async discover(d: Device) {
     console.log('Discovering services and characteristics...');
     const device = await d.discoverAllServicesAndCharacteristics();
     this.activeDevice = device;
     this.isConnected = true;
     console.log('Discovered services and characteristics');
-  };
+  }
 
   // Scans for the device and connects to it
-  scanAndConnect = async () => {
+  private static async scanAndConnect() {
     console.log('Scanning...');
     manager.startDeviceScan(null, null, (error, device) => {
       if (error) {
@@ -50,9 +53,9 @@ class BTController extends React.Component {
           });
       }
     });
-  };
+  }
 
-  Init() {
+  public static init() {
     const subscription = manager.onStateChange(state => {
       if (state === 'PoweredOn') {
         console.log('BLE powered on');
@@ -77,13 +80,13 @@ class BTController extends React.Component {
   }
 
   // Send a message to the device
-  Send(data: string, char: number) {
+  private static send(data: string, char: number) {
     console.log(`Sending ${data} to characteristic ${char}`);
-    if (this.activeDevice) {
+    if (BTController.activeDevice) {
       const characteristic = char === 1 ? characteristic1 : characteristic2;
       manager
         .writeCharacteristicWithoutResponseForDevice(
-          this.activeDevice.id,
+          BTController.activeDevice.id,
           serviceUUID,
           characteristic,
           encode(data),
@@ -94,13 +97,17 @@ class BTController extends React.Component {
     }
   }
 
-  public SendMecanum(angle: number, magnitude: number, rotation: number) {
+  public static sendMecanum(
+    angle: number,
+    magnitude: number,
+    rotation: number,
+  ) {
     angle = Math.floor(angle * 100);
     magnitude = Math.floor(magnitude * 100);
     rotation = Math.floor(rotation * 100);
 
     if (angle === 0 && magnitude === 0 && rotation === 0) {
-      this.Send('stop'.padEnd(14, '0'), 1);
+      this.send('stop'.padEnd(14, '0'), 1);
       return;
     }
 
@@ -109,15 +116,15 @@ class BTController extends React.Component {
     const r = rotation.toString().padStart(4, '0');
 
     const message = `${a}:${m};${r}`;
-    this.Send(message, 1);
+    this.send(message, 1);
   }
 
-  public SendTank(magnitude: number, rotation: number) {
+  public static sendTank(magnitude: number, rotation: number) {
     magnitude = Math.floor(magnitude * 100);
     rotation = Math.floor(rotation * 100);
 
     if (magnitude === 0 && rotation === 0) {
-      this.Send('stop'.padEnd(14, '0'), 2);
+      this.send('stop'.padEnd(14, '0'), 2);
       return;
     }
 
@@ -125,7 +132,7 @@ class BTController extends React.Component {
     const r = rotation.toString().padStart(4, '0');
 
     const message = `${m};${r}`;
-    this.Send(message, 2);
+    this.send(message, 2);
   }
 }
 
