@@ -4,11 +4,14 @@ import WindowDimensions from '../WindowDimensions';
 import {JoystickData} from './Joystick';
 import Joystick from './Joystick';
 import MultiButton, {MultiButtonData} from './MultiButton';
+import BLE from '../BLE';
+import {Text} from 'react-native-paper';
 
 const createJoystick = (
   x: number,
   y: number,
   windowDimensions: WindowDimensions,
+  onChange: (angle: number, magnitude: number) => void = () => {},
   lockX?: boolean,
   lockY?: boolean,
 ) => {
@@ -17,6 +20,7 @@ const createJoystick = (
     windowDimensions: windowDimensions,
     lockX: lockX,
     lockY: lockY,
+    onChange: onChange,
   };
   return new Joystick(joystickProps);
 };
@@ -39,6 +43,8 @@ const createButton = (
   return new MultiButton(buttonProps);
 };
 
+const BT = new BLE();
+
 export default function MultiTouch(): JSX.Element {
   const windowDimensions = WindowDimensions();
   const {width, height} = windowDimensions;
@@ -46,23 +52,27 @@ export default function MultiTouch(): JSX.Element {
 
   const [joysticks, setJoysticks] = useState<Joystick[]>([]);
   const [buttons, setButtons] = useState<MultiButton[]>([]);
+  const [angle, setAngle] = useState<number>(0);
+  const [magnitude, setMagnitude] = useState<number>(0);
+  const [rotation, setRotation] = useState<number>(0);
 
   // Create 2 joysticks on mount
   useEffect(() => {
+    BT.Init();
     setJoysticks([
       createJoystick(
         0,
         height - outerRadius * 2 - innerRadius / 2,
         windowDimensions,
-        // true,
-        // false,
+        onChangeLeftJoystick,
       ),
       createJoystick(
         width - outerRadius * 2,
         height - outerRadius * 2 - innerRadius / 2,
         windowDimensions,
-        // false,
-        // true,
+        onChangeRightJoystick,
+        false,
+        true,
       ),
     ]);
 
@@ -82,14 +92,28 @@ export default function MultiTouch(): JSX.Element {
     ]);
   }, [height, width, windowDimensions, outerRadius, innerRadius]);
 
+  function onChangeLeftJoystick(a: number, m: number) {
+    setAngle(a);
+    setMagnitude(m);
+  }
+
+  function onChangeRightJoystick(a: number, m: number) {
+    setRotation(a < Math.PI ? m : -m);
+  }
+
+  useEffect(() => {
+    console.log('Sending');
+    BT.SendMecanum(angle, magnitude, rotation);
+  }, [angle, magnitude, rotation]);
+
   return (
     <View>
       {joysticks.map((joystick, index) => (
         <Joystick key={index} {...joystick.props} />
       ))}
-      {buttons.map((button, index) => (
+      {/* {buttons.map((button, index) => (
         <MultiButton key={index} {...button.props} />
-      ))}
+      ))} */}
     </View>
   );
 }

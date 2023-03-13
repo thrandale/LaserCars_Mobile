@@ -36,22 +36,26 @@ class Button extends MultiTouchComponent<MultiButtonData, MultiButtonData> {
     return this.state.onPressStyle;
   }
 
+  private get onPress() {
+    return this.state.onPress;
+  }
+
   private handlePress = (event: GestureResponderEvent) => {
     super.handleTouch(event);
-    this.state.onPress(event);
+    this.onPress(event);
 
-    this.setState({
-      ...this.state,
+    this.setState(state => ({
+      ...state,
       onPressStyle: {opacity: 0.5},
-    });
+    }));
   };
 
   protected handleRelease = (event: GestureResponderEvent) => {
     super.handleRelease(event);
-    this.setState({
-      ...this.state,
+    this.setState(state => ({
+      ...state,
       onPressStyle: {opacity: 1},
-    });
+    }));
   };
 
   render() {

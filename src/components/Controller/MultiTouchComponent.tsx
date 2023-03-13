@@ -40,10 +40,10 @@ abstract class MultiTouchComponent<
   }
 
   protected set touchId(touch: string | undefined) {
-    this.setState({
-      ...this.state,
+    this.setState(state => ({
+      ...state,
       touchId: touch,
-    });
+    }));
   }
 
   protected get globalPosition() {
@@ -55,10 +55,10 @@ abstract class MultiTouchComponent<
   }
 
   protected set shouldHandleTouch(shouldHandleTouch: boolean) {
-    this.setState({
-      ...this.state,
+    this.setState(state => ({
+      ...state,
       shouldHandleTouch: shouldHandleTouch,
-    });
+    }));
   }
 
   protected handleTouch(event: GestureResponderEvent) {

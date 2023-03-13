@@ -13,6 +13,7 @@ export interface JoystickData
   magnitude?: number;
   lockX?: boolean;
   lockY?: boolean;
+  onChange: (angle: number, magnitude: number) => void;
 }
 
 class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
@@ -29,6 +30,7 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
       magnitude: 0,
       lockX: props.lockX || false,
       lockY: props.lockY || false,
+      onChange: props.onChange,
     };
   }
 
@@ -55,10 +57,10 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
   }
 
   set stickPosition(stickPosition: {x: number; y: number}) {
-    this.setState({
-      ...this.state,
+    this.setState(state => ({
+      ...state,
       stickPosition: stickPosition,
-    });
+    }));
   }
 
   get value() {
@@ -66,10 +68,10 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
   }
 
   private set value(value: {x: number; y: number}) {
-    this.setState({
-      ...this.state,
+    this.setState(state => ({
+      ...state,
       value: value,
-    });
+    }));
   }
 
   get angle() {
@@ -77,10 +79,10 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
   }
 
   private set angle(angle: number) {
-    this.setState({
-      ...this.state,
+    this.setState(state => ({
+      ...state,
       angle: angle,
-    });
+    }));
   }
 
   get magnitude() {
@@ -88,10 +90,10 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
   }
 
   private set magnitude(magnitude: number) {
-    this.setState({
-      ...this.state,
+    this.setState(state => ({
+      ...state,
       magnitude: magnitude,
-    });
+    }));
   }
 
   get lockX() {
@@ -102,8 +104,11 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
     return this.state.lockY!;
   }
 
-  private handleTouch(event: GestureResponderEvent) {
-    console.log('handleTouch', this.globalPosition.x);
+  private get onChange() {
+    return this.state.onChange!;
+  }
+
+  protected handleTouch(event: GestureResponderEvent) {
     const {nativeEvent} = event;
     const delta = {
       x: this.lockX
@@ -120,10 +125,10 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
           this.globalPosition.y,
     };
     const radius = Math.sqrt(Math.pow(delta.x, 2) + Math.pow(delta.y, 2));
+    let angle = Math.atan2(delta.y, delta.x);
     let newPosition: {x: number; y: number};
     if (radius > outerRadius) {
       // touch is outside the joystick
-      const angle = Math.atan2(delta.y, delta.x);
       newPosition = {
         x: Math.cos(angle) * outerRadius + Joystick.initialStickPos.x,
         y: Math.sin(angle) * outerRadius + Joystick.initialStickPos.y,
@@ -135,41 +140,35 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
         y: delta.y + Joystick.initialStickPos.y,
       };
     }
+
+    angle += Math.PI / 2;
+    if (angle < 0) {
+      angle += Math.PI * 2;
+    }
+    this.value = {
+      x:
+        (this.stickPosition.x - Joystick.initialStickPos.x) /
+        Joystick.joystickSize.outerRadius,
+      y:
+        (this.stickPosition.y - Joystick.initialStickPos.y) /
+        Joystick.joystickSize.outerRadius,
+    };
+    this.angle = angle;
+    this.magnitude = Math.sqrt(
+      Math.pow(this.value.x, 2) + Math.pow(this.value.y, 2),
+    );
     this.stickPosition = newPosition;
+
+    this.onChange(this.angle, this.magnitude);
   }
 
   protected handleRelease(event: GestureResponderEvent): void {
     super.handleRelease(event);
-    this.setState({
-      ...this.state,
-      stickPosition: Joystick.initialStickPos,
-      value: {x: 0, y: 0},
-      angle: 0,
-      magnitude: 0,
-    });
-  }
-
-  // update the joystick value, angle, and magnitude
-  componentDidUpdate(prevProps: JoystickData, prevState: JoystickData) {
-    const {initialStickPos, joystickSize} = Joystick;
-
-    if (this.stickPosition !== prevState.stickPosition) {
-      this.setState({
-        ...this.state,
-        value: {
-          x:
-            (this.stickPosition.x - initialStickPos.x) /
-            joystickSize.outerRadius,
-          y:
-            (this.stickPosition.y - initialStickPos.y) /
-            joystickSize.outerRadius,
-        },
-        angle: Math.atan2(this.value.y, this.value.x) * (180 / Math.PI) + 180,
-        magnitude: Math.sqrt(
-          Math.pow(this.value.x, 2) + Math.pow(this.value.y, 2),
-        ),
-      });
-    }
+    this.stickPosition = Joystick.initialStickPos;
+    this.value = {x: 0, y: 0};
+    this.angle = 0;
+    this.magnitude = 0;
+    this.onChange(0, 0);
   }
 
   render() {
@@ -186,12 +185,12 @@ class Joystick extends MultiTouchComponent<JoystickData, JoystickData> {
         onTouchMove={event => this.handleTouch(event)}
         onTouchEnd={event => this.handleRelease(event)}
         onTouchCancel={event => this.handleRelease(event)}>
-        {/* <View style={styles.textContainer}>
-          <Text>A: {this.state.angle!.toFixed(2)}</Text>
-          <Text>M: {this.state.magnitude!.toFixed(2)}</Text>
-          <Text>X: {this.state.value!.x.toFixed(2)}</Text>
-          <Text>Y: {this.state.value!.y.toFixed(2)}</Text>
-        </View> */}
+        <View style={styles.textContainer}>
+          <Text>A: {this.angle!.toFixed(2)}</Text>
+          <Text>M: {this.magnitude!.toFixed(2)}</Text>
+          <Text>X: {this.value!.x.toFixed(2)}</Text>
+          <Text>Y: {this.value!.y.toFixed(2)}</Text>
+        </View>
         <View style={styles.background} />
         <View style={[styles.line, styles.horizontal]} />
         <View style={[styles.line, styles.vertical]} />

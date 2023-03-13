@@ -1,8 +1,6 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {Keyboard, StyleSheet, View} from 'react-native';
+import React from 'react';
 import {BleManager, Device} from 'react-native-ble-plx';
-import {decode, encode} from 'base-64';
-import {Button, Text, TextInput} from 'react-native-paper';
+import {encode} from 'base-64';
 
 const manager = new BleManager();
 const serviceUUID = '00000000-6a5c-4ebb-8da6-a4471e0965ef';
@@ -11,23 +9,26 @@ const characteristic2 = '00000002-6a5c-4ebb-8da6-a4471e0965ef';
 
 const deviceName = 'Laser Car';
 
-export default function BLE(): JSX.Element {
-  const [activeDevice, setActiveDevice] = useState<Device | null>(null);
-  const [message, setMessage] = useState<string>('');
-  const [valueReceived, setValueReceived] = useState<string>('');
-  const [isConnected, setIsConnected] = useState<boolean>(false);
+class BLE extends React.Component {
+  activeDevice: Device | null;
+  isConnected: boolean;
+  constructor() {
+    super({});
+    this.activeDevice = null;
+    this.isConnected = false;
+  }
 
   // Discovers services and characteristics
-  const discover = useCallback(async (d: Device) => {
+  discover = async (d: Device) => {
     console.log('Discovering services and characteristics...');
     const device = await d.discoverAllServicesAndCharacteristics();
-    setActiveDevice(device);
-    setIsConnected(true);
+    this.activeDevice = device;
+    this.isConnected = true;
     console.log('Discovered services and characteristics');
-  }, []);
+  };
 
   // Scans for the device and connects to it
-  const scanAndConnect = useCallback(async () => {
+  scanAndConnect = async () => {
     console.log('Scanning...');
     manager.startDeviceScan(null, null, (error, device) => {
       if (error) {
@@ -42,16 +43,16 @@ export default function BLE(): JSX.Element {
           .connect()
           .then(d => {
             console.log(`Connected to ${deviceName}`);
-            discover(d);
+            this.discover(d);
           })
           .catch(e => {
             console.log(e);
           });
       }
     });
-  }, [discover]);
+  };
 
-  useEffect(() => {
+  Init() {
     const subscription = manager.onStateChange(state => {
       if (state === 'PoweredOn') {
         console.log('BLE powered on');
@@ -62,94 +63,67 @@ export default function BLE(): JSX.Element {
               console.log('Connecting to existing device...');
               device.connect().then(d => {
                 console.log('Connected to ' + d.name);
-                discover(d);
+                this.discover(d);
               });
             });
           } else {
             // otherwise scan and connect
-            scanAndConnect();
+            this.scanAndConnect();
           }
         });
       }
     }, true);
     return () => subscription.remove();
-  }, [discover, scanAndConnect]);
+  }
 
   // Send a message to the device
-  const send = (char: number) => {
-    Keyboard.dismiss();
-    if (activeDevice) {
+  Send(data: string, char: number) {
+    console.log(`Sending ${data} to characteristic ${char}`);
+    if (this.activeDevice) {
       const characteristic = char === 1 ? characteristic1 : characteristic2;
-      const messageToSend = message ? message : 'Hello World!';
-      const encodedMessage = encode(messageToSend);
       manager
         .writeCharacteristicWithoutResponseForDevice(
-          activeDevice.id,
+          this.activeDevice.id,
           serviceUUID,
           characteristic,
-          encodedMessage,
+          encode(data),
         )
-        .then(() => {
-          console.log('Sent: ' + messageToSend + ' to characteristic ' + char);
-          setMessage('');
-        })
         .catch(e => {
           console.log(e);
         });
     }
-  };
+  }
 
-  useEffect(() => {
-    // monitor for changes to the characteristic
-    if (!isConnected || !activeDevice) {
+  public SendMecanum(angle: number, magnitude: number, rotation: number) {
+    angle = Math.floor(angle * 100);
+    magnitude = Math.floor(magnitude * 100);
+    rotation = Math.floor(rotation * 100);
+
+    if (angle === 0 && magnitude === 0 && rotation === 0) {
+      this.Send('stop'.padEnd(14, '0'), 1);
       return;
     }
 
-    manager.monitorCharacteristicForDevice(
-      activeDevice.id,
-      serviceUUID,
-      characteristic1,
-      (error, characteristic) => {
-        if (error) {
-          console.log(error);
-          return;
-        }
-        if (characteristic && characteristic.value) {
-          let decodedValue = decode(characteristic.value);
-          setValueReceived(decodedValue);
-        }
-      },
-    );
-  }, [isConnected, activeDevice]);
+    const a: string = angle.toString().padStart(4, '0');
+    const m: string = magnitude.toString().padStart(4, '0');
+    const r: string = rotation.toString().padStart(4, '0');
 
-  return (
-    <View style={styles.sendContainer}>
-      <Text variant="titleLarge">Connected To: {activeDevice?.name}</Text>
-      <TextInput
-        label="Message"
-        value={message}
-        onChangeText={setMessage}
-        mode="outlined"
-        onSubmitEditing={() => send(1)}
-        accessibilityLabel={undefined}
-      />
-      <Button mode="contained" onPress={() => send(1)} disabled={!activeDevice}>
-        Send to 1
-      </Button>
-      <Button mode="contained" onPress={() => send(2)} disabled={!activeDevice}>
-        Send to 2
-      </Button>
-      <Text variant="titleLarge">Char 1 value: {valueReceived}</Text>
-    </View>
-  );
+    const message = `${a}:${m};${r}`;
+    this.Send(message, 1);
+  }
+
+  public SendTank(magnitude: number, rotation: number) {
+    magnitude = Math.floor(magnitude * 100);
+    rotation = Math.floor(rotation * 100);
+
+    if (magnitude === 0 && rotation === 0) {
+      this.Send('stop', 2);
+      return;
+    }
+
+    const message = `${magnitude}:${rotation}`;
+    this.Send(message, 2);
+  }
 }
 
-const styles = StyleSheet.create({
-  sendContainer: {
-    padding: 30,
-    paddingBottom: 150,
-    display: 'flex',
-    gap: 20,
-    justifyContent: 'center',
-  },
-});
+export default BLE;

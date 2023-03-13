@@ -15,7 +15,6 @@ function App(): JSX.Element {
   return (
     <SafeAreaView>
       <View>
-        {/* <BLE /> */}
         <MultiTouch />
       </View>
     </SafeAreaView>
