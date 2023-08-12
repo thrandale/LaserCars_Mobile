@@ -19,6 +19,7 @@ function HeaderButtons(props: {
       left: 0,
       padding: 15,
       justifyContent: 'space-between',
+      zIndex: 1,
     },
     startIcons: {
       display: 'flex',
@@ -30,9 +31,6 @@ function HeaderButtons(props: {
       flexDirection: 'row',
       gap: 15,
     },
-    button: {
-      zIndex: 1,
-    },
   });
 
   return (
@@ -41,7 +39,6 @@ function HeaderButtons(props: {
         {!props.hideBack && (
           <GlowingIconButton
             icon="arrow-left"
-            style={styles.button}
             onPress={() => {
               props.navigation.goBack();
             }}
@@ -52,18 +49,13 @@ function HeaderButtons(props: {
         {!props.hideBluetooth && (
           <GlowingIconButton
             icon="bluetooth"
-            style={styles.button}
             onPress={() => {
               props.navigation.navigate('Connect');
             }}
           />
         )}
         {!props.hideSettings && (
-          <GlowingIconButton
-            icon="cog"
-            style={styles.button}
-            onPress={() => {}}
-          />
+          <GlowingIconButton icon="cog" onPress={() => {}} />
         )}
       </View>
     </View>
