@@ -25,6 +25,7 @@ function Home(props: {navigation: NavigationHelpers<any, any>}) {
     },
     input: {
       width: 200,
+      textAlign: 'center',
     },
     title: {
       width: '100%',
