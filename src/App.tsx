@@ -7,14 +7,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import Home from './pages/Home';
-import Connect from './pages/Connect';
-import Drive from './pages/Drive';
-import Settings from './pages/Settings';
-import Lobby from './pages/Lobby';
 import SettingsContextProvider from './contexts/SettingsContext';
-import BTController from './components/BTController';
-import LayoutEditor from './pages/LayoutEditor';
-import ColorSelection from './pages/ColorSelection';
+import BTController from './controllers/BTController';
 
 function App(): JSX.Element {
   const theme = useTheme();
@@ -41,12 +35,12 @@ function App(): JSX.Element {
                 autoHideHomeIndicator: true,
               }}>
               <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="Connect" component={Connect} />
+              {/* <Stack.Screen name="Connect" component={Connect} />
               <Stack.Screen name="Drive" component={Drive} />
               <Stack.Screen name="Settings" component={Settings} />
               <Stack.Screen name="LayoutEditor" component={LayoutEditor} />
               <Stack.Screen name="Lobby" component={Lobby} />
-              <Stack.Screen name="ColorSelection" component={ColorSelection} />
+              <Stack.Screen name="ColorSelection" component={ColorSelection} /> */}
             </Stack.Navigator>
           </NavigationContainer>
         </SettingsContextProvider>
