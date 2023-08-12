@@ -4,6 +4,13 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
+import android.view.WindowManager;
+import android.os.Build;
+import android.os.Bundle;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 
 public class MainActivity extends ReactActivity {
 
@@ -28,5 +35,26 @@ public class MainActivity extends ReactActivity {
         getMainComponentName(),
         // If you opted-in for the New Architecture, we enable the Fabric Renderer.
         DefaultNewArchitectureEntryPoint.getFabricEnabled());
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+      WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+      layoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+      getWindow().setAttributes(layoutParams);
+      getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+      getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+    }
+    super.onCreate(savedInstanceState);
+
+    WindowInsetsControllerCompat windowInsetsController =
+      WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+    // Configure the behavior of the hidden system bars.
+    windowInsetsController.setSystemBarsBehavior(
+        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    );
+
+    windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
   }
 }
