@@ -42,7 +42,7 @@ function Home(props: {navigation: NavigationHelpers<any, any>}) {
     <View style={styles.container}>
       <KeyboardAvoidingView
         behavior="padding"
-        keyboardVerticalOffset={-25}
+        keyboardVerticalOffset={-50}
         style={[styles.keyboardAvoidingView]}>
         <HeaderButtons hideBack navigation={props.navigation} />
         <Text style={styles.title}>Photon Fighters</Text>
@@ -51,6 +51,8 @@ function Home(props: {navigation: NavigationHelpers<any, any>}) {
           mode="outlined"
           placeholder="Lobby Code"
           disableFullscreenUI
+          maxLength={8}
+          autoCorrect={false}
         />
         <GlowingButton style={styles.input} onPress={() => {}}>
           Join Lobby

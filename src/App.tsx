@@ -9,6 +9,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from './pages/Home';
 import SettingsContextProvider from './contexts/SettingsContext';
 import BTController from './controllers/BTController';
+import Connect from './pages/Connect';
 
 function App(): JSX.Element {
   const theme = useTheme();
@@ -35,8 +36,8 @@ function App(): JSX.Element {
                 autoHideHomeIndicator: true,
               }}>
               <Stack.Screen name="Home" component={Home} />
-              {/* <Stack.Screen name="Connect" component={Connect} />
-              <Stack.Screen name="Drive" component={Drive} />
+              <Stack.Screen name="Connect" component={Connect} />
+              {/* <Stack.Screen name="Drive" component={Drive} />
               <Stack.Screen name="Settings" component={Settings} />
               <Stack.Screen name="LayoutEditor" component={LayoutEditor} />
               <Stack.Screen name="Lobby" component={Lobby} />
