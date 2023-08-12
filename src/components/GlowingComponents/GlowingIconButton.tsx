@@ -3,10 +3,12 @@ import React from 'react';
 import {IconButton, useTheme} from 'react-native-paper';
 import GlowingComponent from './GlowingComponent';
 import {rgbToRgba} from '../../ColorUtils';
+import {IconSource} from 'react-native-paper/lib/typescript/components/Icon';
+import {StyleProp, ViewStyle} from 'react-native';
 
-export default function GlowingIconButton(props: {
-  icon: string;
-  style?: any;
+function GlowingIconButton(props: {
+  icon: IconSource;
+  style?: StyleProp<ViewStyle>;
   onPress?: () => void;
 }) {
   const theme = useTheme();
@@ -25,3 +27,5 @@ export default function GlowingIconButton(props: {
     </GlowingComponent>
   );
 }
+
+export default GlowingIconButton;

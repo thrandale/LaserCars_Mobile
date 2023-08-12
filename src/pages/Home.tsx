@@ -1,8 +1,7 @@
-/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {Text, TextInput} from 'react-native-paper';
 import {useTheme} from 'react-native-paper';
-import {KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
+import {KeyboardAvoidingView, StyleSheet, View} from 'react-native';
 import {NavigationHelpers} from '@react-navigation/native';
 import GlowingButton from '../components/GlowingComponents/GlowingButton';
 import HeaderButtons from '../components/HeaderButtons';
@@ -45,8 +44,8 @@ function Home(props: {navigation: NavigationHelpers<any, any>}) {
         behavior="padding"
         keyboardVerticalOffset={-25}
         style={[styles.keyboardAvoidingView]}>
+        <HeaderButtons hideBack navigation={props.navigation} />
         <Text style={styles.title}>Photon Fighters</Text>
-        <HeaderButtons hideBack />
         <TextInput
           style={styles.input}
           mode="outlined"

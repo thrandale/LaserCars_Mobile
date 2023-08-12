@@ -61,8 +61,8 @@ const darkTheme: MD3Theme = {
   fonts: configureFonts({config: fontConfig}),
 };
 
-const ThemeWrapper = (props: any) => {
+function ThemeWrapper(props: any) {
   return <PaperProvider theme={darkTheme}>{props.children}</PaperProvider>;
-};
+}
 
 export default ThemeWrapper;

@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import GlowingIconButton from '../components/GlowingComponents/GlowingIconButton';
 
-export default function HeaderButtons(props: {
+function HeaderButtons(props: {
   hideBack?: boolean;
   hideBluetooth?: boolean;
   hideSettings?: boolean;
@@ -48,3 +48,5 @@ export default function HeaderButtons(props: {
     </View>
   );
 }
+
+export default HeaderButtons;

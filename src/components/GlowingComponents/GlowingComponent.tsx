@@ -4,8 +4,8 @@ import {Shadow} from 'react-native-shadow-2';
 import {useTheme} from 'react-native-paper';
 import {rgbToRgba} from '../../ColorUtils';
 
-export default function GlowingComponent(props: {
-  children: any;
+function GlowingComponent(props: {
+  children: React.ReactNode;
   onPress?: () => void;
 }) {
   const theme = useTheme();
@@ -20,3 +20,5 @@ export default function GlowingComponent(props: {
     </Shadow>
   );
 }
+
+export default GlowingComponent;

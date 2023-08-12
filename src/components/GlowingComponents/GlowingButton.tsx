@@ -2,10 +2,11 @@ import React from 'react';
 import {Button, useTheme} from 'react-native-paper';
 import GlowingComponent from './GlowingComponent';
 import {rgbToRgba} from '../../ColorUtils';
+import {StyleProp, ViewStyle} from 'react-native';
 
-export default function GlowingButton(props: {
-  children: any;
-  style?: any;
+function GlowingButton(props: {
+  children: React.ReactNode;
+  style?: StyleProp<ViewStyle>;
   onPress?: () => void;
 }) {
   const theme = useTheme();
@@ -22,3 +23,5 @@ export default function GlowingButton(props: {
     </GlowingComponent>
   );
 }
+
+export default GlowingButton;
