@@ -1,12 +1,11 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {NavigationHelpers} from '@react-navigation/native';
 import GlowingIconButton from '../components/GlowingComponents/GlowingIconButton';
 
 export default function HeaderButtons(props: {
-  hideSettings?: boolean;
-  hideBluetooth?: boolean;
   hideBack?: boolean;
+  hideBluetooth?: boolean;
+  hideSettings?: boolean;
 }) {
   const styles = StyleSheet.create({
     settingButtonsContainer: {
@@ -35,11 +34,7 @@ export default function HeaderButtons(props: {
     <View style={styles.settingButtonsContainer}>
       <View style={styles.startIcons}>
         {!props.hideBack && (
-          <GlowingIconButton
-            icon="arrow-left"
-            onPress={() => {}}
-            style={{alignSelf: 'left'}}
-          />
+          <GlowingIconButton icon="arrow-left" onPress={() => {}} />
         )}
       </View>
       <View style={styles.endIcons}>

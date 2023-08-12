@@ -1,3 +1,4 @@
+import React from 'react';
 import {Button, useTheme} from 'react-native-paper';
 import GlowingComponent from './GlowingComponent';
 import {rgbToRgba} from '../../ColorUtils';

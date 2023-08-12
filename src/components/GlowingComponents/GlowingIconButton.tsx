@@ -1,4 +1,6 @@
-import {Button, IconButton, useTheme} from 'react-native-paper';
+/* eslint-disable react-native/no-inline-styles */
+import React from 'react';
+import {IconButton, useTheme} from 'react-native-paper';
 import GlowingComponent from './GlowingComponent';
 import {rgbToRgba} from '../../ColorUtils';
 

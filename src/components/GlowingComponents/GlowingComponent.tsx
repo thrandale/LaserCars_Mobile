@@ -1,6 +1,7 @@
-import {StyleSheet, View} from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import React from 'react';
 import {Shadow} from 'react-native-shadow-2';
-import {Button, useTheme} from 'react-native-paper';
+import {useTheme} from 'react-native-paper';
 import {rgbToRgba} from '../../ColorUtils';
 
 export default function GlowingComponent(props: {
@@ -11,7 +12,7 @@ export default function GlowingComponent(props: {
 
   return (
     <Shadow
-      distance={12}
+      distance={10}
       startColor={rgbToRgba(theme.colors.shadow, 0.5)}
       endColor={rgbToRgba(theme.colors.shadow, 0)}
       style={{borderRadius: 50}}>

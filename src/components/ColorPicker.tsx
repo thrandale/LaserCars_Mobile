@@ -6,7 +6,7 @@ import {
   PanGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
 import {SettingsContext} from '../contexts/SettingsContext';
-import BTController, {Zone} from './BTController';
+import BTController, {Zone} from '../controllers/BTController';
 
 function ColorPicker(props: {
   onColorChange: (color: string) => void;

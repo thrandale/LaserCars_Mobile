@@ -1,11 +1,10 @@
-import React, {useContext} from 'react';
-import {Button, Text, TextInput} from 'react-native-paper';
+/* eslint-disable react-native/no-inline-styles */
+import React from 'react';
+import {Text, TextInput} from 'react-native-paper';
 import {useTheme} from 'react-native-paper';
-import {StyleSheet, View} from 'react-native';
-import {SettingsContext} from '../contexts/SettingsContext';
+import {KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
 import {NavigationHelpers} from '@react-navigation/native';
 import GlowingButton from '../components/GlowingComponents/GlowingButton';
-import GlowingIconButton from '../components/GlowingComponents/GlowingIconButton';
 import HeaderButtons from '../components/HeaderButtons';
 
 function Home(props: {navigation: NavigationHelpers<any, any>}) {
@@ -14,53 +13,55 @@ function Home(props: {navigation: NavigationHelpers<any, any>}) {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      display: 'flex',
       backgroundColor: theme.colors.background,
+    },
+    keyboardAvoidingView: {
+      flex: 1,
+      display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       gap: 20,
-      display: 'flex',
     },
     input: {
       width: 200,
     },
     title: {
-      fontSize: 50,
       width: '100%',
       height: '20%',
       textAlign: 'center',
       color: theme.colors.primary,
+      fontSize: 50,
       textShadowColor: theme.colors.shadow,
-      textShadowRadius: 40,
+      textShadowRadius: 30,
       textShadowOffset: {width: 0, height: 0},
-    },
-    settingButtonsContainer: {
-      position: 'absolute',
-      display: 'flex',
-      flexDirection: 'row',
-      gap: 15,
-      top: 15,
-      right: 15,
     },
   });
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Photon Fighters</Text>
-      <TextInput
-        style={styles.input}
-        mode="outlined"
-        placeholder="Lobby Code"
-      />
-      <GlowingButton style={styles.input} onPress={() => {}}>
-        Join Lobby
-      </GlowingButton>
-      <GlowingButton style={styles.input} onPress={() => {}}>
-        Create Lobby
-      </GlowingButton>
-      <GlowingButton style={styles.input} onPress={() => {}}>
-        Drive
-      </GlowingButton>
-      <HeaderButtons hideBack={true} />
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={-25}
+        style={[styles.keyboardAvoidingView]}>
+        <Text style={styles.title}>Photon Fighters</Text>
+        <HeaderButtons hideBack />
+        <TextInput
+          style={styles.input}
+          mode="outlined"
+          placeholder="Lobby Code"
+          disableFullscreenUI
+        />
+        <GlowingButton style={styles.input} onPress={() => {}}>
+          Join Lobby
+        </GlowingButton>
+        <GlowingButton style={styles.input} onPress={() => {}}>
+          Create Lobby
+        </GlowingButton>
+        <GlowingButton style={styles.input} onPress={() => {}}>
+          Drive
+        </GlowingButton>
+      </KeyboardAvoidingView>
     </View>
   );
 }
