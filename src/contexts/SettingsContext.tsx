@@ -63,8 +63,16 @@ const SettingsContextProvider = (props: any) => {
   };
 
   const ShowSnackBar = (message: string) => {
-    settings.snackBar.message.setValue(message);
-    settings.snackBar.visible.setValue(true);
+    if (settings.snackBar.visible.value) {
+      settings.snackBar.visible.setValue(false);
+      setTimeout(() => {
+        settings.snackBar.message.setValue(message);
+        settings.snackBar.visible.setValue(true);
+      }, 50);
+    } else {
+      settings.snackBar.message.setValue(message);
+      settings.snackBar.visible.setValue(true);
+    }
   };
 
   const ShowDialog = (message: string, action: () => void) => {
@@ -88,8 +96,8 @@ const SettingsContextProvider = (props: any) => {
     currentColor: useSavedSetting<string>('currentColor', '0000FF'),
     Reset,
     snackBar: {
-      visible: useSetting<boolean>(true),
-      message: useSetting<string>('Snack bar message'),
+      visible: useSetting<boolean>(false),
+      message: useSetting<string>(''),
       Show: ShowSnackBar,
     },
     dialog: {

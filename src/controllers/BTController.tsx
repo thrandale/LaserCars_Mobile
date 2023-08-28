@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert, PermissionsAndroid, Platform} from 'react-native';
+import {PermissionsAndroid, Platform} from 'react-native';
 import {BleManager, Device, Subscription} from 'react-native-ble-plx';
 import {encode} from 'base-64';
 import {SettingsContext} from '../contexts/SettingsContext';
@@ -75,15 +75,8 @@ class BTController extends React.Component {
               PermissionsAndroid.RESULTS.GRANTED
           )
         ) {
-          Alert.alert(
-            'Permissions not granted',
-            'Please grant permissions and try again.',
-            [
-              {
-                text: 'OK',
-                onPress: () => console.log('OK Pressed'),
-              },
-            ],
+          this.context.snackBar.Show(
+            'Permissions not granted. Please grant permissions and try again.',
           );
           return false;
         }
@@ -98,17 +91,9 @@ class BTController extends React.Component {
     if (state === 'PoweredOn') {
       return true;
     } else {
-      Alert.alert(
-        'Bluetooth is not powered on',
-        'Please turn on Bluetooth and try again.',
-        [
-          {
-            text: 'OK',
-            onPress: () => console.log('OK Pressed'),
-          },
-        ],
+      this.context.snackBar.Show(
+        'Bluetooth is not powered on. Please turn on Bluetooth and try again.',
       );
-
       return false;
     }
   }
@@ -132,7 +117,7 @@ class BTController extends React.Component {
     console.log(`Connecting to ${device.name}...`);
     return new Promise((resolve, reject) => {
       device
-        .connect({timeout: 5000})
+        .connect({timeout: 2000})
         .then(d => {
           this.discover(d).then(() => {
             activeDevice.setValue(d);
@@ -163,13 +148,17 @@ class BTController extends React.Component {
     });
   }
 
-  public async disconnect(device: Device) {
+  public async disconnect() {
     const {connected, activeDevice} = this.context.bt;
-    console.log(`Disconnecting from ${device.name}...`);
+    if (!activeDevice.value) {
+      return;
+    }
+
+    console.log(`Disconnecting from ${activeDevice.value.name}...`);
     this.disconnectListener?.remove();
     return new Promise(resolve => {
-      device.cancelConnection().then(() => {
-        console.log(`Disconnected from ${device.name}`);
+      activeDevice.value!.cancelConnection().then(() => {
+        console.log(`Disconnected from ${activeDevice.value!.name}`);
         connected.setValue(false);
         activeDevice.setValue(null);
         resolve(undefined);

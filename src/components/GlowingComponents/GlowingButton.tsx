@@ -9,7 +9,6 @@ function GlowingButton(props: {
   style?: StyleProp<ViewStyle>;
   margin?: number;
   onPress?: () => void;
-  [key: string]: any;
 }) {
   const theme = useTheme();
 
