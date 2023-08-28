@@ -26,6 +26,7 @@ function GlowingComponent(props: {
       shadowOffset: {width: 0, height: 0},
       borderRadius: 25,
       shadowColor: theme.colors.shadow,
+      backgroundColor: theme.colors.shadow,
     },
   });
 
