@@ -7,16 +7,18 @@ import {StyleProp, ViewStyle} from 'react-native';
 function GlowingButton(props: {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  margin?: number;
   onPress?: () => void;
+  [key: string]: any;
 }) {
   const theme = useTheme();
 
   return (
-    <GlowingComponent>
+    <GlowingComponent style={{margin: props.margin}}>
       <Button
         mode="contained"
-        style={props.style}
         onPress={props.onPress}
+        style={props.style}
         rippleColor={rgbToRgba(theme.colors.shadow, 0.6)}>
         {props.children}
       </Button>

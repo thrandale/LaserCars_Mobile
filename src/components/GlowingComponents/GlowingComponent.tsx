@@ -1,23 +1,38 @@
-/* eslint-disable react-native/no-inline-styles */
-import React from 'react';
-import {Shadow} from 'react-native-shadow-2';
+import React, {useEffect, useState} from 'react';
 import {useTheme} from 'react-native-paper';
-import {rgbToRgba} from '../../ColorUtils';
+import {ShadowedView} from 'react-native-fast-shadow';
+import {Platform, StyleSheet} from 'react-native';
 
 function GlowingComponent(props: {
   children: React.ReactNode;
+  style?: any;
   onPress?: () => void;
 }) {
   const theme = useTheme();
+  const [shadowRadius, setShadowRadius] = useState(10);
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      setShadowRadius(18);
+    } else {
+      setShadowRadius(8);
+    }
+  }, []);
+
+  const styles = StyleSheet.create({
+    shadow: {
+      shadowOpacity: 1,
+      shadowRadius: shadowRadius,
+      shadowOffset: {width: 0, height: 0},
+      borderRadius: 25,
+      shadowColor: theme.colors.shadow,
+    },
+  });
 
   return (
-    <Shadow
-      distance={10}
-      startColor={rgbToRgba(theme.colors.shadow, 0.5)}
-      endColor={rgbToRgba(theme.colors.shadow, 0)}
-      style={{borderRadius: 50}}>
+    <ShadowedView style={[props.style, styles.shadow]}>
       {props.children}
-    </Shadow>
+    </ShadowedView>
   );
 }
 
