@@ -32,6 +32,15 @@ interface Layout {
   components: ComponentsSetting;
 }
 
+interface SnackBar {
+  visible: MutableSetting<boolean>;
+  message: MutableSetting<string>;
+}
+
+interface Dialog extends SnackBar {
+  action: MutableSetting<() => void>;
+}
+
 export interface Settings {
   drivingMode: SavedSetting<string>;
   bt: BT;
@@ -39,6 +48,8 @@ export interface Settings {
   layout: Layout;
   theme: MD3Theme;
   currentColor: SavedSetting<string>;
+  snackBar: SnackBar;
+  dialog: Dialog;
   reset: () => void;
 }
 
@@ -63,6 +74,15 @@ const SettingsContextProvider = (props: any) => {
     theme: useTheme(),
     currentColor: useSavedSetting<string>('currentColor', '0000FF'),
     reset,
+    snackBar: {
+      visible: useSetting<boolean>(true),
+      message: useSetting<string>('Snack bar message'),
+    },
+    dialog: {
+      visible: useSetting<boolean>(false),
+      message: useSetting<string>(''),
+      action: useSetting<() => void>(() => {}),
+    },
   };
 
   return (
