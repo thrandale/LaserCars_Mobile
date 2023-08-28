@@ -35,10 +35,12 @@ interface Layout {
 interface SnackBar {
   visible: MutableSetting<boolean>;
   message: MutableSetting<string>;
+  Show: (message: string) => void;
 }
 
-interface Dialog extends SnackBar {
+interface Dialog extends Omit<SnackBar, 'Show'> {
   action: MutableSetting<() => void>;
+  Show: (message: string, action: () => () => void) => void;
 }
 
 export interface Settings {
@@ -50,14 +52,25 @@ export interface Settings {
   currentColor: SavedSetting<string>;
   snackBar: SnackBar;
   dialog: Dialog;
-  reset: () => void;
+  Reset: () => void;
 }
 
 export const SettingsContext = createContext<Settings>({} as Settings);
 
 const SettingsContextProvider = (props: any) => {
-  const reset = () => {
+  const Reset = () => {
     resetSettings(settings);
+  };
+
+  const ShowSnackBar = (message: string) => {
+    settings.snackBar.message.setValue(message);
+    settings.snackBar.visible.setValue(true);
+  };
+
+  const ShowDialog = (message: string, action: () => void) => {
+    settings.dialog.message.setValue(message);
+    settings.dialog.action.setValue(action);
+    settings.dialog.visible.setValue(true);
   };
 
   const settings = {
@@ -73,15 +86,17 @@ const SettingsContextProvider = (props: any) => {
     },
     theme: useTheme(),
     currentColor: useSavedSetting<string>('currentColor', '0000FF'),
-    reset,
+    Reset,
     snackBar: {
       visible: useSetting<boolean>(true),
       message: useSetting<string>('Snack bar message'),
+      Show: ShowSnackBar,
     },
     dialog: {
       visible: useSetting<boolean>(false),
       message: useSetting<string>(''),
       action: useSetting<() => void>(() => {}),
+      Show: ShowDialog,
     },
   };
 

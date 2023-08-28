@@ -1,7 +1,6 @@
 import React, {useContext} from 'react';
 import {Portal, Dialog, Text, Button, useTheme} from 'react-native-paper';
 import {SettingsContext} from '../contexts/SettingsContext';
-import GlowingButton from './GlowingComponents/GlowingButton';
 import {StyleSheet} from 'react-native';
 
 function SnackBarManager() {
@@ -13,7 +12,6 @@ function SnackBarManager() {
   }
 
   function action() {
-    console.log('Dialog action');
     dialog.action.value();
     closeDialog();
   }
