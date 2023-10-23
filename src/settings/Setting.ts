@@ -28,17 +28,6 @@ export interface SavedSetting<T> extends MutableSetting<T> {
 }
 
 /**
- * A setting that represents a component or a group of components.
- * Can be modified in runtime.
- * Stored in local storage.
- */
-export interface ComponentsSetting {
-  values: Map<string, Animated.ValueXY>;
-  setComponent: (id: string, value: Animated.ValueXY) => void;
-  reset: () => void;
-}
-
-/**
  * Returns a stateful value, and a function to update it.
  */
 export const useSetting = <T>(initialValue: T): MutableSetting<T> => {
@@ -107,47 +96,6 @@ export const useSavedSetting = <T>(
   return {
     value: value,
     setValue: setSetting,
-    reset,
-  };
-};
-
-export const useComponentsSetting = (key: string): ComponentsSetting => {
-  const savedSetting = useSavedSetting(key, JSON.stringify(new Map()));
-  const [components, setComponents] = useState<Map<string, Animated.ValueXY>>(
-    new Map(),
-  );
-
-  // Parse the saved setting
-  useEffect(() => {
-    const items = JSON.parse(savedSetting.value);
-    if (Object.keys(items).length > 0) {
-      setComponents(
-        new Map(
-          items.map((comp: [id: string, pos: {x: number; y: number}]) => [
-            comp[0],
-            new Animated.ValueXY(comp[1]),
-          ]) as [string, Animated.ValueXY][],
-        ),
-      );
-    }
-  }, [key, savedSetting.value]);
-
-  // Save setting to local storage
-  useEffect(() => {
-    savedSetting.setValue(JSON.stringify([...components]));
-  }, [components, savedSetting]);
-
-  const setComponent = (id: string, position: Animated.ValueXY) => {
-    setComponents(new Map(components.set(id, position)));
-  };
-
-  const reset = () => {
-    setComponents(new Map());
-  };
-
-  return {
-    values: components,
-    setComponent,
     reset,
   };
 };

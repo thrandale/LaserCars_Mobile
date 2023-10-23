@@ -16,11 +16,12 @@ export const useWindow = () => {
   });
 
   return {
-    ...dimensions,
-    left,
-    right,
-    top,
-    bottom,
+    width: dimensions.width,
+    height: dimensions.height,
+    leftSA: left,
+    rightSA: right,
+    topSA: top,
+    bottomSA: bottom,
     horizontalOffset,
     verticalOffset,
   };

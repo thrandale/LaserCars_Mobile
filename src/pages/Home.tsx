@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Text, TextInput} from 'react-native-paper';
 import {useTheme} from 'react-native-paper';
 import {KeyboardAvoidingView, StyleSheet, View} from 'react-native';
 import {NavigationHelpers} from '@react-navigation/native';
 import GlowingButton from '../components/GlowingComponents/GlowingButton';
 import HeaderButtons from '../components/HeaderButtons';
+import Header from '../components/Header';
 
 function Home(props: {navigation: NavigationHelpers<any, any>}) {
   const theme = useTheme();
@@ -27,16 +28,6 @@ function Home(props: {navigation: NavigationHelpers<any, any>}) {
       textAlign: 'center',
       zIndex: 1,
     },
-    title: {
-      width: '100%',
-      height: '20%',
-      textAlign: 'center',
-      color: theme.colors.primary,
-      fontSize: 50,
-      textShadowColor: theme.colors.shadow,
-      textShadowRadius: 30,
-      textShadowOffset: {width: 0, height: 0},
-    },
   });
 
   return (
@@ -46,7 +37,7 @@ function Home(props: {navigation: NavigationHelpers<any, any>}) {
         keyboardVerticalOffset={-50}
         style={[styles.keyboardAvoidingView]}>
         <HeaderButtons hideBack navigation={props.navigation} />
-        <Text style={styles.title}>Photon Fighters</Text>
+        <Header>Photon Fighters</Header>
         <TextInput
           style={styles.input}
           mode="outlined"

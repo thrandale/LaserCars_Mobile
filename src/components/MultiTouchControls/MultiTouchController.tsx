@@ -9,11 +9,11 @@ import HitReceiver from '../../controllers/HitReceiver';
 import MultiTouchArcButtons, {
   MultiTouchArcButtonsProps,
 } from './MultiTouchArcButtons';
+import {DrivingMode} from '../../settings/DrivingModes';
 
 const createJoystick = (
   x: number,
   y: number,
-  label: string,
   onChange: (angle: number, magnitude: number) => void,
   lockX?: boolean,
   lockY?: boolean,
@@ -21,7 +21,6 @@ const createJoystick = (
   const joystickProps: JoystickProps = {
     globalPosition: {x: x, y: y},
     onChange: onChange,
-    label: label,
     lockX: lockX,
     lockY: lockY,
   };
@@ -45,16 +44,16 @@ const createArcButtons = (
     endAngle: endAngle,
     onPress: onPress,
     numButtons: numButtons,
-    label: 'FIXME',
   };
   return new MultiTouchArcButtons(buttonProps);
 };
 
 export default function MultiTouchController(props: {editMode: boolean}) {
   const settings = useContext(SettingsContext);
-  const {drivingMode} = settings;
+  const {drivingMode, buttons1, buttons2} = settings.controlEditor;
   const {width, height, horizontalOffset, verticalOffset} = settings.window;
   const {outerRadius, innerRadius} = Joystick.size;
+  const joystickOffset = horizontalOffset + 30;
 
   const [multiTouchComponents, setMultiComponents] = useState<
     MultiTouchComponent<any>[]
@@ -68,11 +67,11 @@ export default function MultiTouchController(props: {editMode: boolean}) {
   useEffect(() => {
     setMultiComponents([
       createArcButtons(
-        horizontalOffset + Joystick.size.outerRadius,
+        joystickOffset + Joystick.size.outerRadius,
         height - outerRadius * 2 - verticalOffset + Joystick.size.outerRadius,
         -45,
         135,
-        3,
+        parseInt(buttons1.value, 10),
         [
           () => console.log('Pressed 1-0'),
           () => console.log('Pressed 1-1'),
@@ -80,11 +79,11 @@ export default function MultiTouchController(props: {editMode: boolean}) {
         ],
       ),
       createArcButtons(
-        width - outerRadius * 2 - horizontalOffset + Joystick.size.outerRadius,
+        width - outerRadius * 2 - joystickOffset + Joystick.size.outerRadius,
         height - outerRadius * 2 - verticalOffset + Joystick.size.outerRadius,
         45,
         225,
-        3,
+        parseInt(buttons2.value, 10),
         [
           () => console.log('Pressed 2-0'),
           () => console.log('Pressed 2-1'),
@@ -92,16 +91,14 @@ export default function MultiTouchController(props: {editMode: boolean}) {
         ],
       ),
       createJoystick(
-        horizontalOffset,
+        joystickOffset,
         height - outerRadius * 2 - verticalOffset,
-        'Left Joystick',
         onChangeLeftJoystick,
-        drivingMode.value === 'tank',
+        drivingMode.value === DrivingMode.Tank,
       ),
       createJoystick(
-        width - outerRadius * 2 - horizontalOffset,
+        width - outerRadius * 2 - joystickOffset,
         height - outerRadius * 2 - verticalOffset,
-        'Right Joystick',
         onChangeRightJoystick,
         false,
         true,
@@ -115,6 +112,9 @@ export default function MultiTouchController(props: {editMode: boolean}) {
     verticalOffset,
     width,
     height,
+    joystickOffset,
+    buttons1,
+    buttons2,
   ]);
 
   function onChangeLeftJoystick(a: number, m: number) {

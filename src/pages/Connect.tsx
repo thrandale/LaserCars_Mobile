@@ -7,12 +7,13 @@ import {SettingsContext} from '../contexts/SettingsContext';
 import HeaderButtons from '../components/HeaderButtons';
 import BTController, {Zone} from '../controllers/BTController';
 import GlowingButton from '../components/GlowingComponents/GlowingButton';
+import Header from '../components/Header';
 
 function Connect(props: {navigation: NavigationHelpers<any, any>}) {
   const theme = useTheme();
   const settings = useContext(SettingsContext);
   const {snackBar} = settings;
-  const {connected, activeDevice} = settings.bt;
+  const {activeDevice} = settings.bt;
   const [devices, setDevices] = useState<Device[]>([]);
   const [connectingTo, setConnectingTo] = useState<string | null>(null);
 
@@ -116,17 +117,6 @@ function Connect(props: {navigation: NavigationHelpers<any, any>}) {
     grid: {
       padding: 20,
     },
-    title: {
-      width: '100%',
-      height: '20%',
-      textAlign: 'center',
-      color: theme.colors.primary,
-      fontSize: 50,
-      textShadowColor: theme.colors.shadow,
-      textShadowRadius: 30,
-      textShadowOffset: {width: 0, height: 0},
-      marginTop: 10,
-    },
     item: {
       width: 150,
     },
@@ -150,7 +140,7 @@ function Connect(props: {navigation: NavigationHelpers<any, any>}) {
         showConnecting
         navigation={props.navigation}
       />
-      <Text style={styles.title}>Connect to Car</Text>
+      <Header>Connect to Car</Header>
       {devices.length === 0 && (
         <View style={styles.scanningWrapper}>
           <Text style={styles.scanning}>Scanning...</Text>

@@ -16,12 +16,17 @@ export interface MultiTouchArcButtonsProps extends MultiTouchComponentProps {
   onPress: (() => void)[];
 }
 
-class MultiTouchArcButtons extends MultiTouchComponent<MultiTouchArcButtonsProps> {
-  private static readonly innerRadius = Joystick.size.outerRadius + 10;
-  private static readonly thickness = 50;
-  private static readonly padding = 5;
+export interface MultiTouchArcButtonsState {
+  buttonAngles: {start: number; end: number}[];
+}
 
-  private buttonAngles: {start: number; end: number}[] = [];
+class MultiTouchArcButtons extends MultiTouchComponent<
+  MultiTouchArcButtonsProps,
+  MultiTouchArcButtonsState
+> {
+  private static readonly innerRadius = Joystick.size.outerRadius + 10;
+  private static readonly thickness = 55;
+  private static readonly padding = 5;
 
   constructor(props: MultiTouchArcButtonsProps) {
     super(props);
@@ -35,13 +40,46 @@ class MultiTouchArcButtons extends MultiTouchComponent<MultiTouchArcButtonsProps
       ) / props.numButtons;
 
     // Calculate the start and end angles for each button
+    const angles = [];
     for (let i = 0; i < props.numButtons; i++) {
       const startAngle =
         props.startAngle +
         i * (degreesPerButton + MultiTouchArcButtons.padding);
       const endAngle = startAngle + degreesPerButton;
-      this.buttonAngles.push({start: startAngle, end: endAngle});
+      angles.push({start: startAngle, end: endAngle});
     }
+
+    this.state = {
+      buttonAngles: angles,
+    };
+  }
+
+  public componentDidUpdate(
+    prevProps: Readonly<MultiTouchArcButtonsProps>,
+  ): void {
+    if (prevProps.numButtons === this.props.numButtons) {
+      return;
+    }
+
+    // Divide the arc into equal sections
+    const degreesPerButton =
+      Math.abs(
+        this.props.endAngle -
+          this.props.startAngle -
+          MultiTouchArcButtons.padding * (this.props.numButtons - 1),
+      ) / this.props.numButtons;
+
+    //   // Calculate the start and end angles for each button
+    const angles = [];
+    for (let i = 0; i < this.props.numButtons; i++) {
+      const startAngle =
+        this.props.startAngle +
+        i * (degreesPerButton + MultiTouchArcButtons.padding);
+      const endAngle = startAngle + degreesPerButton;
+      angles.push({start: startAngle, end: endAngle});
+    }
+
+    this.setState({buttonAngles: angles});
   }
 
   protected onTouchStart(event: PanGestureHandlerStateChangeEvent): void {
@@ -58,8 +96,8 @@ class MultiTouchArcButtons extends MultiTouchComponent<MultiTouchArcButtonsProps
     // If the button arc angle is negative, we will need to check against the inverse angle
     const inverseAngle = angle - 360;
 
-    for (let i = 0; i < this.buttonAngles.length; i++) {
-      const buttonAngle = this.buttonAngles[i];
+    for (let i = 0; i < this.state.buttonAngles.length; i++) {
+      const buttonAngle = this.state.buttonAngles[i];
       if (
         ((buttonAngle.start < 0 &&
           inverseAngle >= buttonAngle.start &&
@@ -75,10 +113,14 @@ class MultiTouchArcButtons extends MultiTouchComponent<MultiTouchArcButtonsProps
     }
   }
 
+  protected renderIcon(): React.ReactNode {
+    throw new Error('Method not implemented.');
+  }
+
   protected renderChild(): React.ReactNode {
     return (
       <View>
-        {this.buttonAngles.map((angle, index) => {
+        {this.state.buttonAngles.map((angle, index) => {
           return (
             <ArcButton
               x={this.props.globalPosition.x}

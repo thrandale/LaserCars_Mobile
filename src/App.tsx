@@ -11,6 +11,9 @@ import BTController from './controllers/BTController';
 import Connect from './pages/Connect';
 import Drive from './pages/Drive';
 import Home from './pages/Home';
+import Settings from './pages/Settings';
+import ColorSelection from './pages/ColorSelection';
+import ControlEditor from './pages/ControlEditor';
 
 function App(): JSX.Element {
   const theme = useTheme();
@@ -40,10 +43,9 @@ function App(): JSX.Element {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Connect" component={Connect} />
             <Stack.Screen name="Drive" component={Drive} />
-            {/* <Stack.Screen name="Settings" component={Settings} />
-              <Stack.Screen name="LayoutEditor" component={LayoutEditor} />
-              <Stack.Screen name="Lobby" component={Lobby} />
-              <Stack.Screen name="ColorSelection" component={ColorSelection} /> */}
+            <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen name="ControlEditor" component={ControlEditor} />
+            <Stack.Screen name="ColorSelection" component={ColorSelection} />
           </Stack.Navigator>
         </NavigationContainer>
       </SettingsContextProvider>

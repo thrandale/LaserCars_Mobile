@@ -1,5 +1,10 @@
 - Settings page
   - [ ] Controls editor
+    - [ ] Joystick Distance
+    - [ ] Button Action
+    - [ ] Button Icon
+    - [X] Number of buttons
+    - [ ] Driving Mode
   - [ ] Car Color Changer
 - [ ] Lobbies
 - [ ] Disable drive if not connected to BT

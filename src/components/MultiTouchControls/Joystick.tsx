@@ -9,6 +9,9 @@ import MultiTouchComponent, {
   MultiTouchComponentProps,
 } from './MultiTouchComponent';
 import GlowingComponent from '../GlowingComponents/GlowingComponent';
+import {DrivingMode} from '../../settings/DrivingModes';
+import Icon from 'react-native-vector-icons/FontAwesome6';
+import {JoystickIcon} from './JoystickIcons';
 
 export interface JoystickProps extends MultiTouchComponentProps {
   onChange: (angle: number, magnitude: number) => void;
@@ -128,6 +131,39 @@ class Joystick extends MultiTouchComponent<JoystickProps> {
     this.props.onChange(0, 0);
   }
 
+  protected renderIcon(): React.ReactNode {
+    const iconSize = 40;
+    let icon;
+
+    if (!this.lockX && !this.lockY) {
+      if (
+        this.context.controlEditor.drivingMode.value === DrivingMode.Mecanum
+      ) {
+        icon = JoystickIcon.Translate;
+      } else {
+        icon = JoystickIcon.All;
+      }
+    } else if (this.lockX && !this.lockY) {
+      icon = JoystickIcon.UpDown;
+    } else if (!this.lockX && this.lockY) {
+      icon = JoystickIcon.Turn;
+    } else {
+      icon = JoystickIcon.Turn;
+    }
+
+    if (this.props.editMode) {
+      return (
+        <Icon
+          name={icon}
+          size={iconSize}
+          color={this.context.theme.colors.onBackground}
+        />
+      );
+    } else {
+      return null;
+    }
+  }
+
   protected renderChild(): React.ReactNode {
     return (
       <Animated.View
@@ -159,7 +195,7 @@ class Joystick extends MultiTouchComponent<JoystickProps> {
                   backgroundColor: this.context.theme.colors.primary,
                 },
               ]}>
-              {this.renderLabel()}
+              {this.renderIcon()}
             </View>
           </GlowingComponent>
         </Animated.View>

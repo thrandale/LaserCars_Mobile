@@ -41,7 +41,7 @@ const darkTheme: MD3Theme = {
     secondary: 'rgb(62, 35, 95)',
     secondaryContainer: 'rgb(120, 69, 185)',
     onSecondary: 'rgb(228, 228, 228)',
-    onSecondaryContainer: 'rgb(120, 69, 185)',
+    onSecondaryContainer: 'rgb(228, 228, 228)',
     outlineVariant: 'rgb(120, 69, 185)',
     surfaceVariant: 'rgb(120, 69, 185)',
     onSurfaceVariant: 'rgb(228, 228, 228)',

@@ -2,16 +2,15 @@ import React, {createContext} from 'react';
 import {Device} from 'react-native-ble-plx';
 import {MD3Theme, useTheme} from 'react-native-paper';
 import {
-  ComponentsSetting,
   MutableSetting,
   StaticSetting,
   SavedSetting,
   resetSettings,
-  useComponentsSetting,
   useSetting,
   useSavedSetting,
 } from '../settings/Setting';
 import {useWindow} from '../settings/Window';
+import {DrivingMode} from '../settings/DrivingModes';
 
 interface BT {
   connected: MutableSetting<boolean>;
@@ -21,15 +20,12 @@ interface BT {
 interface Window {
   width: StaticSetting<number>;
   height: StaticSetting<number>;
-  left: StaticSetting<number>;
-  right: StaticSetting<number>;
-  top: StaticSetting<number>;
-  bottom: StaticSetting<number>;
-}
-
-interface Layout {
-  gridSize: StaticSetting<number>;
-  components: ComponentsSetting;
+  leftSA: StaticSetting<number>;
+  rightSA: StaticSetting<number>;
+  topSA: StaticSetting<number>;
+  bottomSA: StaticSetting<number>;
+  horizontalOffset: StaticSetting<number>;
+  verticalOffset: StaticSetting<number>;
 }
 
 interface SnackBar {
@@ -43,11 +39,16 @@ interface Dialog extends Omit<SnackBar, 'Show'> {
   Show: (message: string, action: () => () => void) => void;
 }
 
+interface ControlEditor {
+  drivingMode: SavedSetting<DrivingMode>;
+  buttons1: SavedSetting<string>;
+  buttons2: SavedSetting<string>;
+}
+
 export interface Settings {
-  drivingMode: SavedSetting<string>;
+  controlEditor: ControlEditor;
   bt: BT;
   window: Window;
-  layout: Layout;
   theme: MD3Theme;
   currentColor: SavedSetting<string>;
   snackBar: SnackBar;
@@ -82,16 +83,19 @@ const SettingsContextProvider = (props: any) => {
   };
 
   const settings = {
-    drivingMode: useSavedSetting<string>('drivingMode', 'mecanum'),
+    controlEditor: {
+      drivingMode: useSavedSetting<DrivingMode>(
+        'drivingMode',
+        DrivingMode.Mecanum,
+      ),
+      buttons1: useSavedSetting<string>('buttons1', '2'),
+      buttons2: useSavedSetting<string>('buttons2', '3'),
+    },
     bt: {
       connected: useSetting<boolean>(false),
       activeDevice: useSetting<Device | null>(null),
     },
     window: useWindow(),
-    layout: {
-      gridSize: 15,
-      components: useComponentsSetting('components'),
-    },
     theme: useTheme(),
     currentColor: useSavedSetting<string>('currentColor', '0000FF'),
     Reset,

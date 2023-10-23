@@ -42,6 +42,7 @@ function HeaderButtons(props: {
       top: 0,
       left: 0,
       padding: 20,
+      paddingBottom: 0,
       justifyContent: 'space-between',
       zIndex: 1,
     },
@@ -79,7 +80,12 @@ function HeaderButtons(props: {
           />
         )}
         {!props.hideSettings && (
-          <GlowingIconButton icon="cog" onPress={() => {}} />
+          <GlowingIconButton
+            icon="cog"
+            onPress={() => {
+              props.navigation.navigate('Settings');
+            }}
+          />
         )}
         {props.showConnecting && <AnimatedBTIcon />}
       </View>
