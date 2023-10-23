@@ -7,6 +7,9 @@ function GlowingComponent(props: {
   children: React.ReactNode;
   style?: any;
   onPress?: () => void;
+  width?: number;
+  height?: number;
+  borderRadius?: number;
 }) {
   const theme = useTheme();
   const [shadowRadius, setShadowRadius] = useState(10);
@@ -24,9 +27,11 @@ function GlowingComponent(props: {
       shadowOpacity: 1,
       shadowRadius: shadowRadius,
       shadowOffset: {width: 0, height: 0},
-      borderRadius: 25,
+      borderRadius: props.borderRadius || 25,
       shadowColor: theme.colors.shadow,
       backgroundColor: theme.colors.shadow,
+      width: props.width,
+      height: props.height,
     },
   });
 

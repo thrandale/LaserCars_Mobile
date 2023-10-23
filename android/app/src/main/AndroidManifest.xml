@@ -8,7 +8,7 @@
   <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" />
   <uses-feature android:name="android.hardware.bluetooth" android:required="true" />
   <uses-feature android:name="android.hardware.bluetooth_le" android:required="true" />
-  <uses-permission android:name="android.permission.VIBRATE"/>
+  <uses-permission android:name="android.permission.VIBRATE" />
 
   <application
     android:name=".MainApplication"
@@ -24,7 +24,7 @@
       android:launchMode="singleTask"
       android:windowSoftInputMode="adjustResize"
       android:exported="true"
-      android:screenOrientation="landscape">
+      android:screenOrientation="userLandscape">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />

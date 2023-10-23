@@ -20,7 +20,7 @@
     "@react-navigation/native-stack": "^6.9.13",
     "base-64": "^1.0.0",
     "react": "18.2.0",
-    "react-native": "0.72.3",
+    "react-native": "0.72.5",
     "react-native-ble-plx": "github:dotintent/react-native-ble-plx",
     "react-native-fast-shadow": "^0.1.0",
     "react-native-gesture-handler": "^2.12.1",

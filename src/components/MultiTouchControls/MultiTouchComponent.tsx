@@ -69,7 +69,7 @@ abstract class MultiTouchComponent<
 
       let x =
         Math.round(
-          (event.nativeEvent.absoluteX - window.left - this.width / 2) /
+          (event.nativeEvent.absoluteX - window.leftSA - this.width / 2) /
             gridSize,
         ) * gridSize;
       let y =

@@ -8,6 +8,7 @@ import {
 import MultiTouchComponent, {
   MultiTouchComponentProps,
 } from './MultiTouchComponent';
+import GlowingComponent from '../GlowingComponents/GlowingComponent';
 
 export interface JoystickProps extends MultiTouchComponentProps {
   onChange: (angle: number, magnitude: number) => void;
@@ -17,7 +18,6 @@ export interface JoystickProps extends MultiTouchComponentProps {
 
 class Joystick extends MultiTouchComponent<JoystickProps> {
   static readonly outerLineWidth = 6;
-  static readonly innerLineWidth = Joystick.outerLineWidth / 2;
   static readonly size = {
     outerRadius: 75,
     innerRadius: 75 / 2,
@@ -138,22 +138,30 @@ class Joystick extends MultiTouchComponent<JoystickProps> {
               {translateX: this.globalPosition.x},
               {translateY: this.globalPosition.y},
             ],
+            borderColor: this.context.theme.colors.primary,
           },
         ]}>
-        <View style={styles.background} />
-        <View style={[styles.line, styles.horizontal]} />
-        <View style={[styles.line, styles.vertical]} />
         <Animated.View
-          style={[
-            styles.stick,
-            {
-              transform: [
-                {translateX: this.stickPosition.x},
-                {translateY: this.stickPosition.y},
-              ],
-            },
-          ]}>
-          {this.renderLabel()}
+          style={{
+            transform: [
+              {translateX: this.stickPosition.x},
+              {translateY: this.stickPosition.y},
+            ],
+          }}>
+          <GlowingComponent
+            width={Joystick.size.innerRadius * 2}
+            height={Joystick.size.innerRadius * 2}
+            borderRadius={Joystick.size.innerRadius}>
+            <View
+              style={[
+                styles.stick,
+                {
+                  backgroundColor: this.context.theme.colors.primary,
+                },
+              ]}>
+              {this.renderLabel()}
+            </View>
+          </GlowingComponent>
         </Animated.View>
       </Animated.View>
     );
@@ -161,63 +169,24 @@ class Joystick extends MultiTouchComponent<JoystickProps> {
 }
 
 // styles
-const {outerLineWidth, innerLineWidth, outerColor, innerColor} = Joystick;
 const {outerRadius, innerRadius} = Joystick.size;
+const {outerLineWidth} = Joystick;
 
 const styles = StyleSheet.create({
-  box: {
-    width: 150,
-    height: 150,
-    alignSelf: 'center',
-    backgroundColor: 'plum',
-    margin: 10,
-    zIndex: 200,
-  },
-  textContainer: {
-    position: 'absolute',
-    top: -100,
-    left: -outerLineWidth,
-    width: outerRadius * 2,
-  },
   touchArea: {
     position: 'absolute',
     width: outerRadius * 2,
     aspectRatio: 1,
     borderRadius: outerRadius,
     borderWidth: outerLineWidth,
-    borderColor: outerColor,
-  },
-  background: {
-    position: 'absolute',
-    width: outerRadius * 2 - outerLineWidth * 2,
-    aspectRatio: 1,
-    borderRadius: outerRadius,
-    backgroundColor: outerColor,
-    opacity: 0.3,
   },
   stick: {
     width: innerRadius * 2,
-    aspectRatio: 1,
+    height: innerRadius * 2,
     borderRadius: innerRadius,
-    backgroundColor: innerColor,
     opacity: 0.8,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  line: {
-    position: 'absolute',
-    backgroundColor: outerColor,
-    opacity: 0.8,
-  },
-  horizontal: {
-    top: outerRadius - innerLineWidth / 2 - outerLineWidth,
-    width: outerRadius * 2 - outerLineWidth * 2,
-    height: innerLineWidth,
-  },
-  vertical: {
-    left: outerRadius - innerLineWidth / 2 - outerLineWidth,
-    width: innerLineWidth,
-    height: (outerRadius - outerLineWidth) * 2,
   },
 });
 

@@ -61,7 +61,11 @@ function Home(props: {navigation: NavigationHelpers<any, any>}) {
         <GlowingButton style={styles.input} onPress={() => {}}>
           Create Lobby
         </GlowingButton>
-        <GlowingButton style={styles.input} onPress={() => {}}>
+        <GlowingButton
+          style={styles.input}
+          onPress={() => {
+            props.navigation.navigate('Drive');
+          }}>
           Drive
         </GlowingButton>
       </KeyboardAvoidingView>

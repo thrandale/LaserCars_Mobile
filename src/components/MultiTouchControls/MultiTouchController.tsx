@@ -1,12 +1,14 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {View} from 'react-native';
 import Joystick, {JoystickProps} from './Joystick';
-import MultiButton, {MultiButtonProps} from './MultiButton';
 import MultiTouchComponent from './MultiTouchComponent';
 import {SettingsContext} from '../../contexts/SettingsContext';
 import WeaponDataReceiver from '../../controllers/WeaponDataReceiver';
 import BTController from '../../controllers/BTController';
 import HitReceiver from '../../controllers/HitReceiver';
+import MultiTouchArcButtons, {
+  MultiTouchArcButtonsProps,
+} from './MultiTouchArcButtons';
 
 const createJoystick = (
   x: number,
@@ -26,29 +28,32 @@ const createJoystick = (
   return new Joystick(joystickProps);
 };
 
-const createButton = (
+const createArcButtons = (
   x: number,
   y: number,
-  width: number,
-  height: number,
-  label: string,
-  onPress: () => void,
+  startAngle: number,
+  endAngle: number,
+  numButtons: number,
+  onPress: (() => void)[],
 ) => {
-  const buttonProps: MultiButtonProps = {
-    globalPosition: {x: x, y: y},
-    width: width,
-    height: height,
-    label: label,
+  const buttonProps: MultiTouchArcButtonsProps = {
+    globalPosition: {
+      x: x,
+      y: y,
+    },
+    startAngle: startAngle,
+    endAngle: endAngle,
     onPress: onPress,
-    editMode: false,
+    numButtons: numButtons,
+    label: 'FIXME',
   };
-  return new MultiButton(buttonProps);
+  return new MultiTouchArcButtons(buttonProps);
 };
 
 export default function MultiTouchController(props: {editMode: boolean}) {
   const settings = useContext(SettingsContext);
   const {drivingMode} = settings;
-  const {width, height} = settings.window;
+  const {width, height, horizontalOffset, verticalOffset} = settings.window;
   const {outerRadius, innerRadius} = Joystick.size;
 
   const [multiTouchComponents, setMultiComponents] = useState<
@@ -61,38 +66,56 @@ export default function MultiTouchController(props: {editMode: boolean}) {
 
   // Create 2 joysticks on mount
   useEffect(() => {
-    const bSize = 75;
-
     setMultiComponents([
+      createArcButtons(
+        horizontalOffset + Joystick.size.outerRadius,
+        height - outerRadius * 2 - verticalOffset + Joystick.size.outerRadius,
+        -45,
+        135,
+        3,
+        [
+          () => console.log('Pressed 1-0'),
+          () => console.log('Pressed 1-1'),
+          () => console.log('Pressed 1-2'),
+        ],
+      ),
+      createArcButtons(
+        width - outerRadius * 2 - horizontalOffset + Joystick.size.outerRadius,
+        height - outerRadius * 2 - verticalOffset + Joystick.size.outerRadius,
+        45,
+        225,
+        3,
+        [
+          () => console.log('Pressed 2-0'),
+          () => console.log('Pressed 2-1'),
+          () => console.log('Pressed 2-2'),
+        ],
+      ),
       createJoystick(
-        innerRadius,
-        height - outerRadius * 2 - innerRadius,
+        horizontalOffset,
+        height - outerRadius * 2 - verticalOffset,
         'Left Joystick',
         onChangeLeftJoystick,
         drivingMode.value === 'tank',
       ),
       createJoystick(
-        width - outerRadius * 2 - innerRadius,
-        height - outerRadius * 2 - innerRadius,
+        width - outerRadius * 2 - horizontalOffset,
+        height - outerRadius * 2 - verticalOffset,
         'Right Joystick',
         onChangeRightJoystick,
         false,
         true,
       ),
-      createButton(200, 195, bSize, bSize, 'Fire 0', () => {
-        BTController.getInstance().sendFireCommand([0]);
-      }),
-      createButton(200, 280, bSize, bSize, 'Fire 1', () => {
-        BTController.getInstance().sendFireCommand([1]);
-      }),
-      createButton(width - 200 - bSize, 195, bSize, bSize, 'Fire 2', () => {
-        BTController.getInstance().sendFireCommand([2]);
-      }),
-      createButton(width - 200 - bSize, 280, bSize, bSize, 'Fire All', () => {
-        BTController.getInstance().sendFireCommand([0, 1, 2]);
-      }),
     ]);
-  }, [height, width, outerRadius, innerRadius, drivingMode]);
+  }, [
+    outerRadius,
+    innerRadius,
+    drivingMode,
+    horizontalOffset,
+    verticalOffset,
+    width,
+    height,
+  ]);
 
   function onChangeLeftJoystick(a: number, m: number) {
     setAngle(a);
@@ -117,9 +140,9 @@ export default function MultiTouchController(props: {editMode: boolean}) {
             editMode={props.editMode}
           />
         ) : (
-          <MultiButton
+          <MultiTouchArcButtons
             key={index}
-            {...(component.props as MultiButtonProps)}
+            {...(component.props as MultiTouchArcButtonsProps)}
             editMode={props.editMode}
           />
         ),

@@ -2,7 +2,7 @@
 import React from 'react';
 import {IconButton, useTheme} from 'react-native-paper';
 import GlowingComponent from './GlowingComponent';
-import {rgbToRgba} from '../../ColorUtils';
+import {rgbToRgba} from '../../Utils';
 import {IconSource} from 'react-native-paper/lib/typescript/components/Icon';
 import {StyleProp, ViewStyle} from 'react-native';
 
