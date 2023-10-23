@@ -1,0 +1,11 @@
+- Settings page
+  - [ ] Controls editor
+  - [ ] Car Color Changer
+- [ ] Lobbies
+- [ ] Disable drive if not connected to BT
+- [ ] Background
+- [ ] Logo
+- Arc Buttons
+  - [ ] Touch Indicator
+  - [ ] Cooldown
+  - [ ] Weapon Icons
