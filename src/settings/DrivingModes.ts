@@ -1,5 +1,5 @@
 export enum DrivingMode {
   Mecanum = 'Mecanum',
-  Tank = 'Tank',
+  Car = 'Car',
   Arcade = 'Arcade',
 }

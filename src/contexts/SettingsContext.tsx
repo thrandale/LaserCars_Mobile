@@ -41,6 +41,7 @@ interface Dialog extends Omit<SnackBar, 'Show'> {
 
 interface ControlEditor {
   drivingMode: SavedSetting<DrivingMode>;
+  swapJoysticks: SavedSetting<boolean>;
   buttons1: SavedSetting<string>;
   buttons2: SavedSetting<string>;
 }
@@ -88,6 +89,7 @@ const SettingsContextProvider = (props: any) => {
         'drivingMode',
         DrivingMode.Mecanum,
       ),
+      swapJoysticks: useSavedSetting<boolean>('swapJoysticks', false),
       buttons1: useSavedSetting<string>('buttons1', '2'),
       buttons2: useSavedSetting<string>('buttons2', '3'),
     },

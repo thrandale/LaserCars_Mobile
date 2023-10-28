@@ -4,7 +4,6 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {useTheme} from 'react-native-paper';
-import DialogManager from './components/DialogManager';
 import SnackBarManager from './components/SnackBarManager';
 import SettingsContextProvider from './contexts/SettingsContext';
 import BTController from './controllers/BTController';
@@ -14,6 +13,7 @@ import Home from './pages/Home';
 import Settings from './pages/Settings';
 import ColorSelection from './pages/ColorSelection';
 import ControlEditor from './pages/ControlEditor';
+import DialogManager from './components/DialogManager';
 
 function App(): JSX.Element {
   const theme = useTheme();

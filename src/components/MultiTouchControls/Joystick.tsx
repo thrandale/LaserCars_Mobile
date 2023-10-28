@@ -14,12 +14,23 @@ import Icon from 'react-native-vector-icons/FontAwesome6';
 import {JoystickIcon} from './JoystickIcons';
 
 export interface JoystickProps extends MultiTouchComponentProps {
-  onChange: (angle: number, magnitude: number) => void;
-  lockX?: boolean;
-  lockY?: boolean;
+  onChange: (
+    angle: number,
+    magnitude: number,
+    lockX: boolean,
+    lockY: boolean,
+  ) => void;
+  lockX: boolean;
+  lockY: boolean;
 }
 
-class Joystick extends MultiTouchComponent<JoystickProps> {
+interface JoystickState {
+  lockX: boolean;
+  lockY: boolean;
+  hidden: boolean;
+}
+
+class Joystick extends MultiTouchComponent<JoystickProps, JoystickState> {
   static readonly outerLineWidth = 6;
   static readonly size = {
     outerRadius: 75,
@@ -43,8 +54,6 @@ class Joystick extends MultiTouchComponent<JoystickProps> {
   private stickPosition: Animated.ValueXY;
   private angle: number;
   private magnitude: number;
-  private lockX: boolean;
-  private lockY: boolean;
 
   constructor(props: JoystickProps) {
     super(props);
@@ -52,19 +61,39 @@ class Joystick extends MultiTouchComponent<JoystickProps> {
     this.stickPosition.setOffset(Joystick.initialStickPos);
     this.angle = 0;
     this.magnitude = 0;
-    this.lockX = props.lockX ?? false;
-    this.lockY = props.lockY ?? false;
     this.width = Joystick.size.outerRadius * 2;
     this.height = Joystick.size.outerRadius * 2;
+
+    this.state = {
+      lockX: props.lockX,
+      lockY: props.lockY,
+      hidden: props.lockX && props.lockY,
+    };
+  }
+
+  public componentDidUpdate(prevProps: Readonly<JoystickProps>): void {
+    const lockXChanged = prevProps.lockX !== this.props.lockX;
+    const lockYChanged = prevProps.lockY !== this.props.lockY;
+
+    if (lockXChanged) {
+      this.setState({lockX: this.props.lockX});
+    }
+    if (lockYChanged) {
+      this.setState({lockY: this.props.lockY});
+    }
+
+    if (lockXChanged || lockYChanged) {
+      this.setState({hidden: this.props.lockX && this.props.lockY});
+    }
   }
 
   protected onTouchStart(event: PanGestureHandlerStateChangeEvent): void {
     // offset the stick to the touch position
     this.stickPosition.setOffset({
-      x: this.lockX
+      x: this.state.lockX
         ? Joystick.initialStickPos.x
         : event.nativeEvent.x - Joystick.joystickOffset,
-      y: this.lockY
+      y: this.state.lockY
         ? Joystick.initialStickPos.y
         : event.nativeEvent.y - Joystick.joystickOffset,
     });
@@ -74,8 +103,8 @@ class Joystick extends MultiTouchComponent<JoystickProps> {
   protected onTouchMove = (event: PanGestureHandlerGestureEvent) => {
     // constrain the stick to the outer circle
     const delta = {
-      x: this.lockX ? 0 : event.nativeEvent.x - Joystick.size.outerRadius,
-      y: this.lockY ? 0 : event.nativeEvent.y - Joystick.size.outerRadius,
+      x: this.state.lockX ? 0 : event.nativeEvent.x - Joystick.size.outerRadius,
+      y: this.state.lockY ? 0 : event.nativeEvent.y - Joystick.size.outerRadius,
     };
     const radius = Math.sqrt(Math.pow(delta.x, 2) + Math.pow(delta.y, 2));
     let angle = Math.atan2(delta.y, delta.x);
@@ -113,7 +142,12 @@ class Joystick extends MultiTouchComponent<JoystickProps> {
       y: Joystick.initialStickPos.y,
     });
 
-    this.props.onChange(this.angle, this.magnitude);
+    this.props.onChange(
+      this.angle,
+      this.magnitude,
+      this.state.lockX,
+      this.state.lockY,
+    );
   };
 
   protected onTouchEnd(): void {
@@ -128,14 +162,14 @@ class Joystick extends MultiTouchComponent<JoystickProps> {
     this.angle = 0;
     this.magnitude = 0;
 
-    this.props.onChange(0, 0);
+    this.props.onChange(0, 0, this.state.lockX, this.state.lockY);
   }
 
   protected renderIcon(): React.ReactNode {
     const iconSize = 40;
     let icon;
 
-    if (!this.lockX && !this.lockY) {
+    if (!this.state.lockX && !this.state.lockY) {
       if (
         this.context.controlEditor.drivingMode.value === DrivingMode.Mecanum
       ) {
@@ -143,9 +177,9 @@ class Joystick extends MultiTouchComponent<JoystickProps> {
       } else {
         icon = JoystickIcon.All;
       }
-    } else if (this.lockX && !this.lockY) {
+    } else if (this.state.lockX && !this.state.lockY) {
       icon = JoystickIcon.UpDown;
-    } else if (!this.lockX && this.lockY) {
+    } else if (!this.state.lockX && this.state.lockY) {
       icon = JoystickIcon.Turn;
     } else {
       icon = JoystickIcon.Turn;
@@ -165,6 +199,10 @@ class Joystick extends MultiTouchComponent<JoystickProps> {
   }
 
   protected renderChild(): React.ReactNode {
+    if (this.state.hidden) {
+      return <View />;
+    }
+
     return (
       <Animated.View
         style={[

@@ -10,13 +10,19 @@ import MultiTouchArcButtons, {
   MultiTouchArcButtonsProps,
 } from './MultiTouchArcButtons';
 import {DrivingMode} from '../../settings/DrivingModes';
+import {cartesianToPolar, polarToCartesian} from '../../Utils';
 
 const createJoystick = (
   x: number,
   y: number,
-  onChange: (angle: number, magnitude: number) => void,
-  lockX?: boolean,
-  lockY?: boolean,
+  onChange: (
+    angle: number,
+    magnitude: number,
+    lockX: boolean,
+    lockY: boolean,
+  ) => void,
+  lockX: boolean,
+  lockY: boolean,
 ) => {
   const joystickProps: JoystickProps = {
     globalPosition: {x: x, y: y},
@@ -50,7 +56,8 @@ const createArcButtons = (
 
 export default function MultiTouchController(props: {editMode: boolean}) {
   const settings = useContext(SettingsContext);
-  const {drivingMode, buttons1, buttons2} = settings.controlEditor;
+  const {drivingMode, swapJoysticks, buttons1, buttons2} =
+    settings.controlEditor;
   const {width, height, horizontalOffset, verticalOffset} = settings.window;
   const {outerRadius, innerRadius} = Joystick.size;
   const joystickOffset = horizontalOffset + 30;
@@ -65,6 +72,68 @@ export default function MultiTouchController(props: {editMode: boolean}) {
 
   // Create 2 joysticks on mount
   useEffect(() => {
+    function onChangeJoystick(
+      a: number,
+      m: number,
+      lockX: boolean,
+      lockY: boolean,
+    ) {
+      if (lockX && lockY) {
+        return;
+      } else if (lockX) {
+        setAngle(a);
+        setMagnitude(m);
+      } else if (lockY) {
+        setRotation(a < Math.PI ? m : -m);
+      } else if (drivingMode.value === DrivingMode.Mecanum) {
+        setAngle(a);
+        setMagnitude(m);
+      } else {
+        let {x, y} = polarToCartesian(0, 0, a, m);
+        let {radius: xMagnitude, angle: xAngle} = cartesianToPolar(0, 0, x, 0);
+        let {radius: yMagnitude, angle: yAngle} = cartesianToPolar(0, 0, 0, y);
+
+        setAngle(yAngle);
+        setMagnitude(yMagnitude);
+        setRotation(xAngle < Math.PI ? xMagnitude : -xMagnitude);
+      }
+    }
+
+    let leftLockX = false;
+    let leftLockY = false;
+    let rightLockX = false;
+    let rightLockY = false;
+
+    switch (drivingMode.value) {
+      case DrivingMode.Mecanum:
+        leftLockX = false;
+        leftLockY = false;
+        rightLockX = false;
+        rightLockY = true;
+        break;
+      case DrivingMode.Car:
+        leftLockX = true;
+        leftLockY = false;
+        rightLockX = false;
+        rightLockY = true;
+        break;
+      case DrivingMode.Arcade:
+        leftLockX = false;
+        leftLockY = false;
+        rightLockX = true;
+        rightLockY = true;
+        break;
+    }
+
+    if (swapJoysticks.value) {
+      const tempLeftX = leftLockX;
+      const tempLeftY = leftLockY;
+      leftLockX = rightLockX;
+      leftLockY = rightLockY;
+      rightLockX = tempLeftX;
+      rightLockY = tempLeftY;
+    }
+
     setMultiComponents([
       createArcButtons(
         joystickOffset + Joystick.size.outerRadius,
@@ -93,15 +162,16 @@ export default function MultiTouchController(props: {editMode: boolean}) {
       createJoystick(
         joystickOffset,
         height - outerRadius * 2 - verticalOffset,
-        onChangeLeftJoystick,
-        drivingMode.value === DrivingMode.Tank,
+        onChangeJoystick,
+        leftLockX,
+        leftLockY,
       ),
       createJoystick(
         width - outerRadius * 2 - joystickOffset,
         height - outerRadius * 2 - verticalOffset,
-        onChangeRightJoystick,
-        false,
-        true,
+        onChangeJoystick,
+        rightLockX,
+        rightLockY,
       ),
     ]);
   }, [
@@ -115,16 +185,8 @@ export default function MultiTouchController(props: {editMode: boolean}) {
     joystickOffset,
     buttons1,
     buttons2,
+    swapJoysticks.value,
   ]);
-
-  function onChangeLeftJoystick(a: number, m: number) {
-    setAngle(a);
-    setMagnitude(m);
-  }
-
-  function onChangeRightJoystick(a: number, m: number) {
-    setRotation(a < Math.PI ? m : -m);
-  }
 
   useEffect(() => {
     BTController.getInstance().sendDriveCommand(angle, magnitude, rotation);

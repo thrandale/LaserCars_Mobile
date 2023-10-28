@@ -1,5 +1,5 @@
 export enum JoystickIcon {
-  UpDown = 'arrow-up-down',
+  UpDown = 'arrows-up-down',
   Turn = 'arrows-rotate',
   Translate = 'arrows-up-down-left-right',
   All = 'group-arrows-rotate',
