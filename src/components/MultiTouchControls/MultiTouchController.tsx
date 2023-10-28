@@ -56,11 +56,11 @@ const createArcButtons = (
 
 export default function MultiTouchController(props: {editMode: boolean}) {
   const settings = useContext(SettingsContext);
-  const {drivingMode, swapJoysticks, buttons1, buttons2} =
+  const {drivingMode, swapJoysticks, joystickDistance, buttons1, buttons2} =
     settings.controlEditor;
   const {width, height, horizontalOffset, verticalOffset} = settings.window;
   const {outerRadius, innerRadius} = Joystick.size;
-  const joystickOffset = horizontalOffset + 30;
+  const joystickOffset = horizontalOffset + joystickDistance.value;
 
   const [multiTouchComponents, setMultiComponents] = useState<
     MultiTouchComponent<any>[]
@@ -69,6 +69,8 @@ export default function MultiTouchController(props: {editMode: boolean}) {
   const [angle, setAngle] = useState<number>(0);
   const [magnitude, setMagnitude] = useState<number>(0);
   const [rotation, setRotation] = useState<number>(0);
+  const controllerHeight =
+    height - Joystick.size.outerRadius * 2 - verticalOffset;
 
   // Create 2 joysticks on mount
   useEffect(() => {
@@ -137,7 +139,7 @@ export default function MultiTouchController(props: {editMode: boolean}) {
     setMultiComponents([
       createArcButtons(
         joystickOffset + Joystick.size.outerRadius,
-        height - outerRadius * 2 - verticalOffset + Joystick.size.outerRadius,
+        controllerHeight + Joystick.size.outerRadius,
         -45,
         135,
         parseInt(buttons1.value, 10),
@@ -149,7 +151,7 @@ export default function MultiTouchController(props: {editMode: boolean}) {
       ),
       createArcButtons(
         width - outerRadius * 2 - joystickOffset + Joystick.size.outerRadius,
-        height - outerRadius * 2 - verticalOffset + Joystick.size.outerRadius,
+        controllerHeight + Joystick.size.outerRadius,
         45,
         225,
         parseInt(buttons2.value, 10),
@@ -161,14 +163,14 @@ export default function MultiTouchController(props: {editMode: boolean}) {
       ),
       createJoystick(
         joystickOffset,
-        height - outerRadius * 2 - verticalOffset,
+        controllerHeight,
         onChangeJoystick,
         leftLockX,
         leftLockY,
       ),
       createJoystick(
         width - outerRadius * 2 - joystickOffset,
-        height - outerRadius * 2 - verticalOffset,
+        controllerHeight,
         onChangeJoystick,
         rightLockX,
         rightLockY,
@@ -186,6 +188,7 @@ export default function MultiTouchController(props: {editMode: boolean}) {
     buttons1,
     buttons2,
     swapJoysticks.value,
+    controllerHeight,
   ]);
 
   useEffect(() => {

@@ -44,6 +44,11 @@ interface ControlEditor {
   swapJoysticks: SavedSetting<boolean>;
   buttons1: SavedSetting<string>;
   buttons2: SavedSetting<string>;
+  joystickDistance: SavedSetting<number>;
+  minimumJoystickDistance: StaticSetting<number>;
+  minimumJoystickGap: StaticSetting<number>;
+  currentHandler: MutableSetting<number | null>;
+  Reset: () => void;
 }
 
 export interface Settings {
@@ -92,6 +97,11 @@ const SettingsContextProvider = (props: any) => {
       swapJoysticks: useSavedSetting<boolean>('swapJoysticks', false),
       buttons1: useSavedSetting<string>('buttons1', '2'),
       buttons2: useSavedSetting<string>('buttons2', '3'),
+      joystickDistance: useSavedSetting<number>('joystickDistance', 30),
+      minimumJoystickDistance: 10,
+      minimumJoystickGap: 465,
+      currentHandler: useSetting<number | null>(null),
+      Reset,
     },
     bt: {
       connected: useSetting<boolean>(false),

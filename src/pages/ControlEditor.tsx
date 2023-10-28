@@ -18,8 +18,16 @@ import {DrivingMode} from '../settings/DrivingModes';
 
 function ControlEditor(props: {navigation: NavigationHelpers<any, any>}) {
   const theme = useTheme();
-  const {buttons1, buttons2, drivingMode, swapJoysticks} =
-    useContext(SettingsContext).controlEditor;
+  const settings = useContext(SettingsContext);
+  const {
+    buttons1,
+    buttons2,
+    drivingMode,
+    swapJoysticks,
+    joystickDistance,
+    Reset,
+  } = settings.controlEditor;
+  const {horizontalOffset} = settings.window;
   const [drivingModeVisible, setDrivingModeVisible] = useState(false);
 
   const radioButtons = Object.entries(DrivingMode).map(([key, value]) => {
@@ -54,15 +62,15 @@ function ControlEditor(props: {navigation: NavigationHelpers<any, any>}) {
     segmentedButtonsContainer: {
       display: 'flex',
       flexDirection: 'row',
-      width: '100%',
-      height: '100%',
       position: 'absolute',
-      padding: 50,
-      paddingBottom: 255,
+      left: joystickDistance.value + horizontalOffset - 20,
+      right: joystickDistance.value + horizontalOffset - 20,
+      top: 50,
+      bottom: 255,
       alignItems: 'flex-end',
       justifyContent: 'space-between',
     },
-    drivingModeButtonContainer: {
+    buttonContainer: {
       position: 'absolute',
       alignSelf: 'flex-end',
       display: 'flex',
@@ -70,6 +78,7 @@ function ControlEditor(props: {navigation: NavigationHelpers<any, any>}) {
       alignItems: 'center',
       gap: 5,
       padding: 10,
+      paddingRight: 20,
     },
     drivingModeText: {
       fontSize: 16,
@@ -137,7 +146,7 @@ function ControlEditor(props: {navigation: NavigationHelpers<any, any>}) {
         />
       </View>
       <Portal>
-        <View style={styles.drivingModeButtonContainer}>
+        <View style={styles.buttonContainer}>
           <Text style={styles.drivingModeText}>Mode: {drivingMode.value}</Text>
           <GlowingButton
             onPress={() => {
@@ -145,6 +154,12 @@ function ControlEditor(props: {navigation: NavigationHelpers<any, any>}) {
             }}
             margin={10}>
             Change
+          </GlowingButton>
+          <GlowingButton
+            onPress={() => {
+              Reset();
+            }}>
+            Reset
           </GlowingButton>
         </View>
       </Portal>

@@ -49,16 +49,10 @@ abstract class MultiTouchComponent<
   protected abstract renderChild(): React.ReactNode;
 
   private privateMoveEvent = (event: PanGestureHandlerGestureEvent) => {
-    if (!this.props.editMode) {
-      this.onTouchMove(event);
-    }
+    this.onTouchMove(event);
   };
 
   private onHandlerStateChange = (event: PanGestureHandlerStateChangeEvent) => {
-    if (this.props.editMode) {
-      return;
-    }
-
     if (event.nativeEvent.state === State.BEGAN) {
       this.onTouchStart(event);
     } else if (

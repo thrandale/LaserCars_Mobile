@@ -4,7 +4,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 export const useWindow = () => {
   const {left, right, top, bottom} = useSafeAreaInsets();
-  const horizontalOffset = Math.max(left, right, 50);
+  const horizontalOffset = Math.max(left, right);
   const verticalOffset = Math.max(top, bottom, 30);
   const [dimensions, setDimensions] = useState(Dimensions.get('screen'));
 

@@ -71,6 +71,17 @@ class Joystick extends MultiTouchComponent<JoystickProps, JoystickState> {
     };
   }
 
+  private GetMaxOffset() {
+    const window = this.context.window;
+    const controlEditor = this.context.controlEditor;
+
+    return (
+      window.width / 2 -
+      window.horizontalOffset -
+      controlEditor.minimumJoystickGap / 2
+    );
+  }
+
   public componentDidUpdate(prevProps: Readonly<JoystickProps>): void {
     const lockXChanged = prevProps.lockX !== this.props.lockX;
     const lockYChanged = prevProps.lockY !== this.props.lockY;
@@ -85,9 +96,23 @@ class Joystick extends MultiTouchComponent<JoystickProps, JoystickState> {
     if (lockXChanged || lockYChanged) {
       this.setState({hidden: this.props.lockX && this.props.lockY});
     }
+
+    if (prevProps.globalPosition !== this.props.globalPosition) {
+      this.globalPosition.setValue(this.props.globalPosition);
+    }
   }
 
   protected onTouchStart(event: PanGestureHandlerStateChangeEvent): void {
+    if (this.props.editMode) {
+      if (this.context.controlEditor.currentHandler.value === null) {
+        this.context.controlEditor.currentHandler.setValue(
+          event.nativeEvent.handlerTag,
+        );
+      }
+
+      return;
+    }
+
     // offset the stick to the touch position
     this.stickPosition.setOffset({
       x: this.state.lockX
@@ -101,6 +126,36 @@ class Joystick extends MultiTouchComponent<JoystickProps, JoystickState> {
   }
 
   protected onTouchMove = (event: PanGestureHandlerGestureEvent) => {
+    const window = this.context.window;
+    const controlEditor = this.context.controlEditor;
+    if (this.props.editMode) {
+      // If we are in edit mode, move the component
+      if (controlEditor.currentHandler.value !== event.nativeEvent.handlerTag) {
+        return;
+      }
+
+      let x = event.nativeEvent.absoluteX;
+      let offset;
+
+      if (x - event.nativeEvent.translationX > window.width / 2) {
+        offset = window.width - x - window.horizontalOffset;
+      } else {
+        offset = x - window.horizontalOffset;
+      }
+
+      offset -= this.width / 2;
+
+      // Constrain the component to the window
+      if (offset < controlEditor.minimumJoystickDistance) {
+        offset = controlEditor.minimumJoystickDistance;
+      } else if (offset > this.GetMaxOffset()) {
+        offset = this.GetMaxOffset();
+      }
+
+      controlEditor.joystickDistance.setValue(offset);
+      return;
+    }
+
     // constrain the stick to the outer circle
     const delta = {
       x: this.state.lockX ? 0 : event.nativeEvent.x - Joystick.size.outerRadius,
@@ -150,7 +205,20 @@ class Joystick extends MultiTouchComponent<JoystickProps, JoystickState> {
     );
   };
 
-  protected onTouchEnd(): void {
+  protected onTouchEnd(event: PanGestureHandlerStateChangeEvent): void {
+    // @ts-ignore
+    event.persist();
+    if (this.props.editMode) {
+      if (
+        this.context.controlEditor.currentHandler.value ===
+        event.nativeEvent.handlerTag
+      ) {
+        this.context.controlEditor.currentHandler.setValue(null);
+      }
+
+      return;
+    }
+
     // reset stick position
     this.stickPosition.setValue({x: 0, y: 0});
     this.stickPosition.setOffset({
@@ -198,6 +266,24 @@ class Joystick extends MultiTouchComponent<JoystickProps, JoystickState> {
     }
   }
 
+  private styles = StyleSheet.create({
+    touchArea: {
+      position: 'absolute',
+      width: Joystick.size.outerRadius * 2,
+      aspectRatio: 1,
+      borderRadius: Joystick.size.outerRadius,
+      borderWidth: Joystick.outerLineWidth,
+    },
+    stick: {
+      width: Joystick.size.innerRadius * 2,
+      height: Joystick.size.innerRadius * 2,
+      borderRadius: Joystick.size.innerRadius,
+      opacity: 0.8,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  });
+
   protected renderChild(): React.ReactNode {
     if (this.state.hidden) {
       return <View />;
@@ -206,7 +292,7 @@ class Joystick extends MultiTouchComponent<JoystickProps, JoystickState> {
     return (
       <Animated.View
         style={[
-          styles.touchArea,
+          this.styles.touchArea,
           {
             transform: [
               {translateX: this.globalPosition.x},
@@ -228,7 +314,7 @@ class Joystick extends MultiTouchComponent<JoystickProps, JoystickState> {
             borderRadius={Joystick.size.innerRadius}>
             <View
               style={[
-                styles.stick,
+                this.styles.stick,
                 {
                   backgroundColor: this.context.theme.colors.primary,
                 },
@@ -241,27 +327,5 @@ class Joystick extends MultiTouchComponent<JoystickProps, JoystickState> {
     );
   }
 }
-
-// styles
-const {outerRadius, innerRadius} = Joystick.size;
-const {outerLineWidth} = Joystick;
-
-const styles = StyleSheet.create({
-  touchArea: {
-    position: 'absolute',
-    width: outerRadius * 2,
-    aspectRatio: 1,
-    borderRadius: outerRadius,
-    borderWidth: outerLineWidth,
-  },
-  stick: {
-    width: innerRadius * 2,
-    height: innerRadius * 2,
-    borderRadius: innerRadius,
-    opacity: 0.8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default Joystick;
