@@ -3,7 +3,7 @@ import {Portal, Dialog, Text, Button, useTheme} from 'react-native-paper';
 import {SettingsContext} from '../contexts/SettingsContext';
 import {StyleSheet} from 'react-native';
 
-function SnackBarManager() {
+function DialogManager() {
   const {dialog} = useContext(SettingsContext);
   const theme = useTheme();
 
@@ -58,4 +58,4 @@ function SnackBarManager() {
   );
 }
 
-export default SnackBarManager;
+export default DialogManager;
