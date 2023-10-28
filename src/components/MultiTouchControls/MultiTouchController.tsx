@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import Joystick, {JoystickProps} from './Joystick';
 import MultiTouchComponent from './MultiTouchComponent';
 import {SettingsContext} from '../../contexts/SettingsContext';
@@ -11,6 +11,7 @@ import MultiTouchArcButtons, {
 } from './MultiTouchArcButtons';
 import {DrivingMode} from '../../settings/DrivingModes';
 import {cartesianToPolar, polarToCartesian} from '../../Utils';
+import Svg, {Path} from 'react-native-svg';
 
 const createJoystick = (
   x: number,
@@ -56,8 +57,15 @@ const createArcButtons = (
 
 export default function MultiTouchController(props: {editMode: boolean}) {
   const settings = useContext(SettingsContext);
-  const {drivingMode, swapJoysticks, joystickDistance, buttons1, buttons2} =
-    settings.controlEditor;
+  const {
+    drivingMode,
+    swapJoysticks,
+    joystickDistance,
+    minimumJoystickDistance,
+    minimumJoystickGap,
+    buttons1,
+    buttons2,
+  } = settings.controlEditor;
   const {width, height, horizontalOffset, verticalOffset} = settings.window;
   const {outerRadius, innerRadius} = Joystick.size;
   const joystickOffset = horizontalOffset + joystickDistance.value;
@@ -195,8 +203,60 @@ export default function MultiTouchController(props: {editMode: boolean}) {
     BTController.getInstance().sendDriveCommand(angle, magnitude, rotation);
   }, [angle, magnitude, rotation]);
 
+  const styles = StyleSheet.create({
+    arrow: {
+      position: 'absolute',
+      top: controllerHeight + Joystick.outerLineWidth,
+      left: 0,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  });
+
+  console.log(width / 2 - horizontalOffset - minimumJoystickGap / 2 - 10);
   return (
     <View>
+      {props.editMode && (
+        <View style={styles.arrow}>
+          <Svg width={width} height={height}>
+            <Path
+              d={`M ${
+                horizontalOffset +
+                minimumJoystickDistance +
+                Joystick.size.outerRadius
+              } ${Joystick.size.outerRadius - Joystick.outerLineWidth}
+                v -20
+                v 40
+                m 0 -20
+                h ${width / 2 - horizontalOffset - minimumJoystickGap / 2 - 10}
+                v -20
+                v 40
+                `}
+              stroke={settings.theme.colors.primary}
+              fill={'none'}
+              strokeWidth="6"
+            />
+            <Path
+              d={`M ${
+                width -
+                horizontalOffset -
+                minimumJoystickDistance -
+                Joystick.size.outerRadius
+              } ${Joystick.size.outerRadius - Joystick.outerLineWidth}
+                v -20
+                v 40
+                m 0 -20
+                h -${width / 2 - horizontalOffset - minimumJoystickGap / 2 - 10}
+                v -20
+                v 40
+                `}
+              stroke={settings.theme.colors.primary}
+              fill={'none'}
+              strokeWidth="6"
+            />
+          </Svg>
+        </View>
+      )}
       {multiTouchComponents.map((component: MultiTouchComponent<any>, index) =>
         component instanceof Joystick ? (
           <Joystick

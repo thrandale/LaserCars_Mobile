@@ -10,6 +10,7 @@ function GlowingComponent(props: {
   width?: number;
   height?: number;
   borderRadius?: number;
+  disabled?: boolean;
 }) {
   const theme = useTheme();
   const [shadowRadius, setShadowRadius] = useState(10);
@@ -35,11 +36,15 @@ function GlowingComponent(props: {
     },
   });
 
-  return (
-    <ShadowedView style={[props.style, styles.shadow]}>
-      {props.children}
-    </ShadowedView>
-  );
+  if (props.disabled) {
+    return <>{props.children}</>;
+  } else {
+    return (
+      <ShadowedView style={[props.style, styles.shadow]}>
+        {props.children}
+      </ShadowedView>
+    );
+  }
 }
 
 export default GlowingComponent;

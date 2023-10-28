@@ -1,7 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {View} from 'react-native';
-import {useTheme} from 'react-native-paper';
 import Svg, {Path} from 'react-native-svg';
 import {polarToCartesian} from '../Utils';
 
@@ -12,8 +11,8 @@ function ArcButton(props: {
   thickness: number;
   startAngle: number;
   endAngle: number;
+  color: string;
 }) {
-  const theme = useTheme();
   const x = props.x;
   const y = props.y;
   const r = props.innerRadius; // inner arc radius
@@ -65,7 +64,7 @@ function ArcButton(props: {
               A ${cr} ${cr} 0 0 1 ${c8.x} ${c8.y}
               Z
           `}
-          fill={theme.colors.primary}
+          fill={props.color}
         />
       </Svg>
     </View>

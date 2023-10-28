@@ -130,6 +130,7 @@ class MultiTouchArcButtons extends MultiTouchComponent<
               startAngle={angle.start}
               endAngle={angle.end}
               key={index}
+              color={this.GetColor()}
             />
           );
         })}

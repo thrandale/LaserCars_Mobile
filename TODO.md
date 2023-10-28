@@ -1,6 +1,6 @@
 - Settings page
   - [ ] Controls editor
-    - [ ] Joystick Distance
+    - [x] Joystick Distance
     - [ ] Button Action
     - [ ] Button Icon
     - [x] Number of buttons

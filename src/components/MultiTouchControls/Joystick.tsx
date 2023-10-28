@@ -71,17 +71,6 @@ class Joystick extends MultiTouchComponent<JoystickProps, JoystickState> {
     };
   }
 
-  private GetMaxOffset() {
-    const window = this.context.window;
-    const controlEditor = this.context.controlEditor;
-
-    return (
-      window.width / 2 -
-      window.horizontalOffset -
-      controlEditor.minimumJoystickGap / 2
-    );
-  }
-
   public componentDidUpdate(prevProps: Readonly<JoystickProps>): void {
     const lockXChanged = prevProps.lockX !== this.props.lockX;
     const lockYChanged = prevProps.lockY !== this.props.lockY;
@@ -145,11 +134,16 @@ class Joystick extends MultiTouchComponent<JoystickProps, JoystickState> {
 
       offset -= this.width / 2;
 
+      const maxOffset =
+        window.width / 2 -
+        window.horizontalOffset -
+        controlEditor.minimumJoystickGap / 2;
+
       // Constrain the component to the window
       if (offset < controlEditor.minimumJoystickDistance) {
         offset = controlEditor.minimumJoystickDistance;
-      } else if (offset > this.GetMaxOffset()) {
-        offset = this.GetMaxOffset();
+      } else if (offset > maxOffset) {
+        offset = maxOffset;
       }
 
       controlEditor.joystickDistance.setValue(offset);
@@ -278,7 +272,6 @@ class Joystick extends MultiTouchComponent<JoystickProps, JoystickState> {
       width: Joystick.size.innerRadius * 2,
       height: Joystick.size.innerRadius * 2,
       borderRadius: Joystick.size.innerRadius,
-      opacity: 0.8,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -298,7 +291,7 @@ class Joystick extends MultiTouchComponent<JoystickProps, JoystickState> {
               {translateX: this.globalPosition.x},
               {translateY: this.globalPosition.y},
             ],
-            borderColor: this.context.theme.colors.primary,
+            borderColor: this.GetColor(),
           },
         ]}>
         <Animated.View
@@ -311,12 +304,13 @@ class Joystick extends MultiTouchComponent<JoystickProps, JoystickState> {
           <GlowingComponent
             width={Joystick.size.innerRadius * 2}
             height={Joystick.size.innerRadius * 2}
-            borderRadius={Joystick.size.innerRadius}>
+            borderRadius={Joystick.size.innerRadius}
+            disabled={this.props.editMode}>
             <View
               style={[
                 this.styles.stick,
                 {
-                  backgroundColor: this.context.theme.colors.primary,
+                  backgroundColor: this.GetColor(),
                 },
               ]}>
               {this.renderIcon()}

@@ -1,13 +1,13 @@
 import React from 'react';
-import {Animated, StyleSheet} from 'react-native';
+import {Animated} from 'react-native';
 import {
   PanGestureHandler,
   State,
   PanGestureHandlerStateChangeEvent,
   PanGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
-import {Text} from 'react-native-paper';
 import {SettingsContext} from '../../contexts/SettingsContext';
+import {rgbToRgba} from '../../Utils';
 
 export interface MultiTouchComponentProps {
   globalPosition: {x: number; y: number};
@@ -68,6 +68,14 @@ abstract class MultiTouchComponent<
       }, 0);
     }
   };
+
+  protected GetColor(): string {
+    if (this.props.editMode) {
+      return rgbToRgba(this.context.theme.colors.primary, 0.5);
+    } else {
+      return this.context.theme.colors.primary;
+    }
+  }
 
   protected abstract renderIcon(): React.ReactNode;
 
