@@ -63,10 +63,16 @@ function ControlEditor(props: {navigation: NavigationHelpers<any, any>}) {
       justifyContent: 'space-between',
     },
     drivingModeButtonContainer: {
+      position: 'absolute',
       alignSelf: 'flex-end',
       display: 'flex',
-      alignItems: 'flex-end',
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 5,
       padding: 10,
+    },
+    drivingModeText: {
+      fontSize: 16,
     },
     drivingModeButton: {
       width: 150,
@@ -132,12 +138,13 @@ function ControlEditor(props: {navigation: NavigationHelpers<any, any>}) {
       </View>
       <Portal>
         <View style={styles.drivingModeButtonContainer}>
+          <Text style={styles.drivingModeText}>Mode: {drivingMode.value}</Text>
           <GlowingButton
             onPress={() => {
               setDrivingModeVisible(true);
             }}
             margin={10}>
-            Driving Mode
+            Change
           </GlowingButton>
         </View>
       </Portal>
