@@ -1,6 +1,5 @@
-import React, {useEffect} from 'react';
-import {Text, TextInput} from 'react-native-paper';
-import {useTheme} from 'react-native-paper';
+import React from 'react';
+import {TextInput} from 'react-native-paper';
 import {KeyboardAvoidingView, StyleSheet, View} from 'react-native';
 import {NavigationHelpers} from '@react-navigation/native';
 import GlowingButton from '../components/GlowingComponents/GlowingButton';
@@ -8,8 +7,6 @@ import HeaderButtons from '../components/HeaderButtons';
 import Header from '../components/Header';
 
 function Home(props: {navigation: NavigationHelpers<any, any>}) {
-  const theme = useTheme();
-
   const styles = StyleSheet.create({
     container: {
       flex: 1,

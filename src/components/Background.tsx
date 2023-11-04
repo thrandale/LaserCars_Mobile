@@ -8,7 +8,6 @@ import {
   SkPoint,
   vec,
   BlurMask,
-  useImage,
   Fill,
 } from '@shopify/react-native-skia';
 import {
@@ -21,8 +20,7 @@ import {
 } from 'react-native-reanimated';
 import {SettingsContext} from '../contexts/SettingsContext';
 import {useTheme} from 'react-native-paper';
-import {BlurView} from '@react-native-community/blur';
-import {Platform, View} from 'react-native';
+import {Platform} from 'react-native';
 
 function Background() {
   const theme = useTheme();

@@ -1,6 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {useTheme} from 'react-native-paper';
 import {View} from 'react-native';
 import {NavigationHelpers} from '@react-navigation/native';
 import HeaderButtons from '../components/HeaderButtons';

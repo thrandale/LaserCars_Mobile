@@ -3,7 +3,6 @@ import ColorPicker from '../components/ColorPicker';
 import {StyleSheet, View} from 'react-native';
 import HeaderButtons from '../components/HeaderButtons';
 import {NavigationHelpers} from '@react-navigation/native';
-import {useTheme} from 'react-native-paper';
 import BTController, {Zone} from '../controllers/BTController';
 
 function ColorSelection(props: {navigation: NavigationHelpers<any, any>}) {
