@@ -15,6 +15,7 @@ import MultiTouchController from '../components/MultiTouchControls/MultiTouchCon
 import {SettingsContext} from '../contexts/SettingsContext';
 import GlowingButton from '../components/GlowingComponents/GlowingButton';
 import {DrivingMode} from '../settings/DrivingModes';
+import {rgbToRgba} from '../Utils';
 
 function ControlEditor(props: {navigation: NavigationHelpers<any, any>}) {
   const theme = useTheme();
@@ -49,8 +50,8 @@ function ControlEditor(props: {navigation: NavigationHelpers<any, any>}) {
     container: {
       flex: 1,
       display: 'flex',
-      backgroundColor: theme.colors.background,
       position: 'relative',
+      backgroundColor: rgbToRgba(theme.colors.background, 0.7),
     },
     controllerContainer: {
       position: 'absolute',

@@ -7,10 +7,8 @@ import HeaderButtons from '../components/HeaderButtons';
 import MultiTouchController from '../components/MultiTouchControls/MultiTouchController';
 
 function Drive(props: {navigation: NavigationHelpers<any, any>}) {
-  const theme = useTheme();
-
   return (
-    <View style={{flex: 1, backgroundColor: theme.colors.background}}>
+    <View style={{flex: 1}}>
       <HeaderButtons navigation={props.navigation} />
       <MultiTouchController editMode={false} />
     </View>

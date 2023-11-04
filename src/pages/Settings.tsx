@@ -16,7 +16,7 @@ function Settings(props: {navigation: NavigationHelpers<any, any>}) {
     container: {
       display: 'flex',
       flex: 1,
-      backgroundColor: theme.colors.background,
+      alignItems: 'center',
     },
     buttonsContainer: {
       display: 'flex',

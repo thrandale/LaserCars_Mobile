@@ -14,7 +14,6 @@ function Home(props: {navigation: NavigationHelpers<any, any>}) {
     container: {
       flex: 1,
       display: 'flex',
-      backgroundColor: theme.colors.background,
     },
     keyboardAvoidingView: {
       flex: 1,

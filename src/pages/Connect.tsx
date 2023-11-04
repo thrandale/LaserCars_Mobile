@@ -10,7 +10,6 @@ import GlowingButton from '../components/GlowingComponents/GlowingButton';
 import Header from '../components/Header';
 
 function Connect(props: {navigation: NavigationHelpers<any, any>}) {
-  const theme = useTheme();
   const settings = useContext(SettingsContext);
   const {snackBar} = settings;
   const {activeDevice} = settings.bt;
@@ -111,7 +110,6 @@ function Connect(props: {navigation: NavigationHelpers<any, any>}) {
     container: {
       flex: 1,
       display: 'flex',
-      backgroundColor: theme.colors.background,
       alignItems: 'center',
     },
     grid: {

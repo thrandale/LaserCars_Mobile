@@ -1,7 +1,7 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {useTheme} from 'react-native-paper';
 import SnackBarManager from './components/SnackBarManager';
@@ -14,6 +14,7 @@ import Settings from './pages/Settings';
 import ColorSelection from './pages/ColorSelection';
 import ControlEditor from './pages/ControlEditor';
 import DialogManager from './components/DialogManager';
+import Background from './components/Background';
 
 function App(): JSX.Element {
   const theme = useTheme();
@@ -33,12 +34,16 @@ function App(): JSX.Element {
         <DialogManager />
         <BTController />
         <NavigationContainer>
+          <Background />
           <Stack.Navigator
             initialRouteName="Home"
             screenOptions={{
               headerShown: false,
               animation: 'none',
               autoHideHomeIndicator: true,
+              contentStyle: {
+                backgroundColor: 'transparent',
+              },
             }}>
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Connect" component={Connect} />

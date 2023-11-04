@@ -15,3 +15,5 @@
   - [ ] Touch Indicator
   - [ ] Cooldown
   - [ ] Weapon Icons
+- Bluetooth
+  - [ ] Show disconnect snackbar

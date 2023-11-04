@@ -213,7 +213,6 @@ export default function MultiTouchController(props: {editMode: boolean}) {
     },
   });
 
-  console.log(width / 2 - horizontalOffset - minimumJoystickGap / 2 - 10);
   return (
     <View>
       {props.editMode && (
