@@ -20,6 +20,8 @@ import {
 } from 'react-native-reanimated';
 import {SettingsContext} from '../contexts/SettingsContext';
 import {useTheme} from 'react-native-paper';
+
+import NativeBackground from './NativeComponents/NativeBackground';
 import {Platform} from 'react-native';
 
 function Background() {
@@ -110,30 +112,34 @@ function Background() {
     }
   }, true);
 
-  return (
-    <Canvas
-      renderToHardwareTextureAndroid
-      style={{
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-      }}>
-      <Fill color={theme.colors.background} />
-      <Group>
-        {lasers.map((laser, i) => (
-          <Line
-            key={i}
-            p1={laser.start}
-            p2={laser.end}
-            strokeWidth={laser.thickness}
-            color={laser.color}
-            style="stroke">
-            {Platform.OS === 'ios' && <BlurMask blur={7} style="solid" />}
-          </Line>
-        ))}
-      </Group>
-    </Canvas>
-  );
+  if (Platform.OS === 'android') {
+    return <NativeBackground />;
+  } else {
+    return (
+      <Canvas
+        renderToHardwareTextureAndroid
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+        }}>
+        <Fill color={theme.colors.background} />
+        <Group>
+          {lasers.map((laser, i) => (
+            <Line
+              key={i}
+              p1={laser.start}
+              p2={laser.end}
+              strokeWidth={laser.thickness}
+              color={laser.color}
+              style="stroke">
+              {Platform.OS === 'ios' && <BlurMask blur={7} style="solid" />}
+            </Line>
+          ))}
+        </Group>
+      </Canvas>
+    );
+  }
 }
 
 export default Background;
