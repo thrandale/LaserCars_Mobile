@@ -26,12 +26,13 @@
     "react-native-ble-plx": "github:dotintent/react-native-ble-plx",
     "react-native-fast-shadow": "^0.1.0",
     "react-native-gesture-handler": "^2.12.1",
+    "react-native-gradients": "^2.1.1",
     "react-native-paper": "^5.10.0",
     "react-native-radio-buttons-group": "^3.0.5",
     "react-native-reanimated": "^3.5.4",
     "react-native-safe-area-context": "^4.7.1",
     "react-native-screens": "^3.24.0",
-    "react-native-svg": "^13.11.0",
+    "react-native-svg": "^13.14.0",
     "react-native-vector-icons": "^10.0.0"
   },
   "devDependencies": {
