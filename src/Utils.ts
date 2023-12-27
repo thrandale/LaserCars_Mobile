@@ -1,4 +1,20 @@
 /**
+ * Converts an RGB color string to a hex color string.
+ * @param rgb - The RGB color string to convert.
+ * Must be in the format `rgb(r, g, b)`.
+ * @returns The hex color string.
+ */
+export function rgbToHex(rgb: string): string {
+  const [r, g, b] = rgb
+    .replace('rgb(', '')
+    .replace(')', '')
+    .split(',')
+    .map(v => parseInt(v, 10));
+
+  return `#${r.toString(16)}${g.toString(16)}${b.toString(16)}`;
+}
+
+/**
  * Converts an RGB color string to RGBA by adding an alpha value.
  * @param rgb - The RGB color string to convert.
  * @param alpha - The alpha value to add to the RGBA color string.
