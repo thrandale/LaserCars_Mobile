@@ -22,7 +22,7 @@ import {SettingsContext} from '../contexts/SettingsContext';
 import {useTheme} from 'react-native-paper';
 
 import NativeBackground from './NativeComponents/NativeBackground';
-import {Dimensions, PixelRatio, Platform} from 'react-native';
+import {PixelRatio, Platform} from 'react-native';
 import {rgbToHex} from '../Utils';
 
 function Background() {
@@ -155,10 +155,10 @@ function Background() {
         style={{
           // converts dpi to px, provide desired height
           width: PixelRatio.getPixelSizeForLayoutSize(
-            Dimensions.get('window').width,
+            window.width + window.leftSA + window.rightSA,
           ),
           height: PixelRatio.getPixelSizeForLayoutSize(
-            Dimensions.get('window').height,
+            window.height + window.topSA + window.bottomSA,
           ),
           left: 0,
           top: 0,

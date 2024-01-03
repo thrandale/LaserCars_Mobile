@@ -30,7 +30,6 @@ public class NativeBackground extends SimpleViewManager<SurfaceView> {
 
     @ReactProp(name = "backgroundColor")
     public void setBackgroundColor(SurfaceView view, String color) {
-        Log.d("NativeBackground", "setBackgroundColor: " + color);
         if (color == null) {
             return;
         }
@@ -39,7 +38,6 @@ public class NativeBackground extends SimpleViewManager<SurfaceView> {
 
     @ReactProp(name = "maxLength")
     public void setMaxLength(SurfaceView view, Integer maxLength) {
-        Log.d("NativeBackground", "setMaxLength: " + maxLength);
         if (maxLength == null) {
             return;
         }

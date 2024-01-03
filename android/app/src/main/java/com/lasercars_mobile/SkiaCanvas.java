@@ -1,6 +1,8 @@
 package com.lasercars_mobile;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -8,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowMetrics;
 
 import androidx.annotation.NonNull;
 
@@ -18,8 +21,8 @@ import java.util.List;
 import java.util.Random;
 
 public class SkiaCanvas extends SurfaceView implements SurfaceHolder.Callback {
-    private int width = Resources.getSystem().getDisplayMetrics().widthPixels;
-    private int height = Resources.getSystem().getDisplayMetrics().heightPixels;
+    private int width;
+    private int height;
     private int backgroundColor;
     private int minLength;
     private int maxLength;
@@ -33,6 +36,28 @@ public class SkiaCanvas extends SurfaceView implements SurfaceHolder.Callback {
     public SkiaCanvas(Context context) {
         super(context);
         getHolder().addCallback(this);
+
+        Activity activity = getActivity();
+        if (activity != null && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            WindowMetrics windowMetrics = activity.getWindowManager().getCurrentWindowMetrics();
+            // Use windowMetrics
+            width = windowMetrics.getBounds().width();
+            height = windowMetrics.getBounds().height();
+        } else {
+            width = Resources.getSystem().getDisplayMetrics().widthPixels;
+            height = Resources.getSystem().getDisplayMetrics().heightPixels;
+        }
+    }
+
+    private Activity getActivity() {
+        Context context = getContext();
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) {
+                return (Activity) context;
+            }
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return null;
     }
 
     private DrawingThread drawingThread;
@@ -160,7 +185,7 @@ public class SkiaCanvas extends SurfaceView implements SurfaceHolder.Callback {
         void update(double percentageOfFrame) {
             start = new Point(start.x + (int) (speed * percentageOfFrame), start.y + (int) (speed * percentageOfFrame));
 
-            if (start.x > width + 100 || start.y > height + 100) {
+            if (start.x > width || start.y > height) {
                 length = random.nextInt(maxLength - minLength) + minLength;
                 start = new Point(random.nextInt(width + height) - length - height, -length);
                 paint.setColor(colors[random.nextInt(colors.length)]);
