@@ -21,6 +21,9 @@ export function rgbToHex(rgb: string): string {
  * @returns The RGBA color string.
  */
 export function rgbToRgba(rgb: string, alpha: number): string {
+  if (rgb.startsWith('rgba')) {
+    return rgb;
+  }
   return rgb.replace(')', `, ${alpha})`).replace('rgb', 'rgba');
 }
 
