@@ -14,7 +14,7 @@ interface NativeBackgroundProps {
 }
 
 /**
- * Native component for the background on Android.
+ * Native component for the background Lasers.
  */
 export default requireNativeComponent<NativeBackgroundProps>(
   'NativeBackground',
