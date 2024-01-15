@@ -16,7 +16,7 @@ import ControlEditor from './pages/ControlEditor';
 import DialogManager from './components/DialogManager';
 import Background from './components/Background';
 
-function App(): JSX.Element {
+function App(): React.JSX.Element {
   const theme = useTheme();
   const styles = StyleSheet.create({
     root: {
