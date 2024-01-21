@@ -1,3 +1,9 @@
+## Bugs
+- Android
+  - System bars not being hidden
+  - Can't draw behind the safe area
+
+## Other
 - Settings page
   - [ ] Controls editor
     - [x] Joystick Distance
