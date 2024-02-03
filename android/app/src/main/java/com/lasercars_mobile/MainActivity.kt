@@ -1,9 +1,11 @@
 package com.lasercars_mobile
 
 import android.os.Build
+import android.os.Bundle
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
@@ -24,6 +26,12 @@ class MainActivity : ReactActivity() {
      */
     override fun createReactActivityDelegate(): ReactActivityDelegate =
         DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        super.onCreate(savedInstanceState)
+    }
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onWindowFocusChanged(hasFocus: Boolean) {

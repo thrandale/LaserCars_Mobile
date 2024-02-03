@@ -1,7 +1,3 @@
-## Bugs
-- Android
-  - Can't draw behind the safe area
-
 ## Other
 - Settings page
   - [ ] Controls editor
