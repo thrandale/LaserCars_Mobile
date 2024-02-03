@@ -1,14 +1,12 @@
-import React, {useContext} from 'react';
-import {SettingsContext} from '../contexts/SettingsContext';
+import React from 'react';
 import {useTheme} from 'react-native-paper';
 
 import NativeBackground from './NativeComponents/NativeBackground';
-import {PixelRatio, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {rgbToHex} from '../Utils';
 
 function Background() {
   const theme = useTheme();
-  const {window} = useContext(SettingsContext);
   const maxLength = 500;
   const minLength = 100;
   const maxLasers = 30;
@@ -29,15 +27,12 @@ function Background() {
     '#ff0080',
   ];
 
+  // FUTURE: Revisit the "99.9%" to see if we can figure out why "100%" causes
+  // the bottom of other pages to be cut off.
   const styles = StyleSheet.create({
     background: {
-      // converts dpi to px, provide desired height
-      width: PixelRatio.getPixelSizeForLayoutSize(
-        window.width + window.leftSA + window.rightSA,
-      ),
-      height: PixelRatio.getPixelSizeForLayoutSize(
-        window.height + window.topSA + window.bottomSA,
-      ),
+      width: '99.9%',
+      height: '99.9%',
       left: 0,
       top: 0,
       position: 'absolute',
