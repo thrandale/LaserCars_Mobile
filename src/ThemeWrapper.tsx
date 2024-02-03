@@ -31,7 +31,7 @@ const darkTheme: MD3Theme = {
     onSurface: 'rgb(226, 227, 220)',
     outline: 'rgb(122, 117, 127)',
     shadow: 'rgb(161, 42, 212)',
-    surfaceDisabled: 'rgba(226, 227, 220, 0.12)',
+    surfaceDisabled: 'rgba(120, 69, 185, 0.5)',
     onSurfaceDisabled: 'rgba(226, 227, 220, 0.38)',
     backdrop: 'rgba(44, 50, 41, 0.4)',
     tertiary: 'rgb(120, 69, 185)',

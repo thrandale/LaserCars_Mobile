@@ -9,18 +9,21 @@ function GlowingButton(props: {
   style?: StyleProp<ViewStyle>;
   margin?: number;
   borderRadius?: number;
+  disabled?: boolean;
   onPress?: () => void;
 }) {
   const theme = useTheme();
 
   return (
     <GlowingComponent
+      disabled={props.disabled}
       style={{margin: props.margin}}
       borderRadius={props.borderRadius}>
       <Button
         mode="contained"
         onPress={props.onPress}
         style={props.style}
+        disabled={props.disabled}
         rippleColor={rgbToRgba(theme.colors.shadow, 0.6)}>
         {props.children}
       </Button>

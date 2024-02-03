@@ -1,12 +1,14 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {TextInput} from 'react-native-paper';
 import {KeyboardAvoidingView, StyleSheet, View} from 'react-native';
 import {NavigationHelpers} from '@react-navigation/native';
 import GlowingButton from '../components/GlowingComponents/GlowingButton';
 import HeaderButtons from '../components/HeaderButtons';
 import Header from '../components/Header';
+import {SettingsContext} from '../contexts/SettingsContext';
 
 function Home(props: {navigation: NavigationHelpers<any, any>}) {
+  const {connected} = useContext(SettingsContext).bt;
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -50,6 +52,7 @@ function Home(props: {navigation: NavigationHelpers<any, any>}) {
         </GlowingButton>
         <GlowingButton
           style={styles.input}
+          disabled={!connected.value}
           onPress={() => {
             props.navigation.navigate('Drive');
           }}>

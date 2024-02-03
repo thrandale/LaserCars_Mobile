@@ -9,7 +9,7 @@
       - [ ] Disable android ripple on "Swap Joysticks"
   - [x] Car Color Changer
 - [ ] Lobbies
-- [ ] Disable drive if not connected to BT
+- [x] Disable drive if not connected to BT
 - [ ] Background
 - [ ] Logo
 - Arc Buttons
