@@ -18,6 +18,7 @@ export interface MultiTouchArcButtonsProps extends MultiTouchComponentProps {
 
 export interface MultiTouchArcButtonsState {
   buttonAngles: {start: number; end: number}[];
+  pressed: boolean[];
 }
 
 class MultiTouchArcButtons extends MultiTouchComponent<
@@ -51,6 +52,7 @@ class MultiTouchArcButtons extends MultiTouchComponent<
 
     this.state = {
       buttonAngles: angles,
+      pressed: new Array(props.numButtons).fill(false),
     };
   }
 
@@ -83,12 +85,36 @@ class MultiTouchArcButtons extends MultiTouchComponent<
   }
 
   protected onTouchStart(event: PanGestureHandlerStateChangeEvent): void {
-    let {angle, radius} = cartesianToPolar(
-      this.props.globalPosition.x,
-      this.props.globalPosition.y,
+    const buttonIndex = this.getButtonIndex(
       event.nativeEvent.x,
       event.nativeEvent.y,
     );
+
+    if (buttonIndex === -1) {
+      return;
+    }
+
+    this.setState(state => {
+      const pressed = state.pressed;
+      pressed[buttonIndex] = true;
+      return {pressed: pressed};
+    }, this.props.onPress[buttonIndex]);
+
+    this.props.onPress[buttonIndex]();
+  }
+
+  protected onTouchEnd(_event: PanGestureHandlerStateChangeEvent): void {
+    this.setState({pressed: new Array(this.props.numButtons).fill(false)});
+  }
+
+  private getButtonIndex(x: number, y: number): number {
+    let {angle, radius} = cartesianToPolar(
+      this.props.globalPosition.x,
+      this.props.globalPosition.y,
+      x,
+      y,
+    );
+
     // Convert to degrees
     angle = -angle * (180 / Math.PI);
     angle = angle < 0 ? angle + 360 : angle;
@@ -107,10 +133,11 @@ class MultiTouchArcButtons extends MultiTouchComponent<
         radius <=
           MultiTouchArcButtons.innerRadius + MultiTouchArcButtons.thickness
       ) {
-        this.props.onPress[i]();
-        return;
+        return i;
       }
     }
+
+    return -1;
   }
 
   protected renderIcon(): React.ReactNode {
@@ -129,8 +156,9 @@ class MultiTouchArcButtons extends MultiTouchComponent<
               thickness={MultiTouchArcButtons.thickness}
               startAngle={angle.start}
               endAngle={angle.end}
+              pressed={this.state.pressed[index]}
               key={index}
-              color={this.GetColor()}
+              color={this.GetColor(this.state.pressed[index])}
             />
           );
         })}

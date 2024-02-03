@@ -1,4 +1,5 @@
 ## Other
+
 - Settings page
   - [ ] Controls editor
     - [x] Joystick Distance
@@ -13,8 +14,14 @@
 - [x] Background
 - [ ] Logo
 - Arc Buttons
-  - [ ] Touch Indicator
+  - [x] Touch Indicator
   - [ ] Cooldown
   - [ ] Weapon Icons
+  - [ ] Haptic Feedback
+  - [ ] Drag your finger to switch between?
 - Bluetooth
   - [x] Show disconnect snackbar
+
+## Nice to have
+
+- [ ] Handle the Arc buttons onTouch events separately for each button so that you can press more than one button on each side at the same time

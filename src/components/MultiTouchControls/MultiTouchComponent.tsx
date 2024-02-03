@@ -69,9 +69,11 @@ abstract class MultiTouchComponent<
     }
   };
 
-  protected GetColor(): string {
+  protected GetColor(pressed?: boolean): string {
     if (this.props.editMode) {
       return rgbToRgba(this.context.theme.colors.primary, 0.5);
+    } else if (pressed) {
+      return this.context.theme.colors.shadow;
     } else {
       return this.context.theme.colors.primary;
     }

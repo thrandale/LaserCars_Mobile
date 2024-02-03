@@ -12,14 +12,18 @@ function ArcButton(props: {
   startAngle: number;
   endAngle: number;
   color: string;
+  pressed: boolean;
 }) {
+  const shrink = 2;
+
   const x = props.x;
   const y = props.y;
   const r = props.innerRadius; // inner arc radius
   const t = props.thickness; // thickness
   const cr = props.thickness / 4; // corner radius
-  const sa = -props.startAngle * (Math.PI / 180); // start angle
-  const ea = -props.endAngle * (Math.PI / 180); // end angle
+  const sa =
+    -(props.startAngle + (props.pressed ? shrink : 0)) * (Math.PI / 180); // start angle
+  const ea = -(props.endAngle - (props.pressed ? shrink : 0)) * (Math.PI / 180); // end angle
   const large = Math.abs(ea - sa) > Math.PI ? 1 : 0; // large arc flag
   const center = r + t + 1; // center of the circle
 
