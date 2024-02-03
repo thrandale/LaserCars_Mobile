@@ -10,11 +10,11 @@
   - [x] Car Color Changer
 - [ ] Lobbies
 - [x] Disable drive if not connected to BT
-- [ ] Background
+- [x] Background
 - [ ] Logo
 - Arc Buttons
   - [ ] Touch Indicator
   - [ ] Cooldown
   - [ ] Weapon Icons
 - Bluetooth
-  - [ ] Show disconnect snackbar
+  - [x] Show disconnect snackbar
