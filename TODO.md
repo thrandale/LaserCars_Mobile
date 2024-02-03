@@ -1,6 +1,5 @@
 ## Bugs
 - Android
-  - System bars not being hidden
   - Can't draw behind the safe area
 
 ## Other

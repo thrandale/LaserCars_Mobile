@@ -1,11 +1,9 @@
 package com.lasercars_mobile
 
 import android.os.Build
-import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
-import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
