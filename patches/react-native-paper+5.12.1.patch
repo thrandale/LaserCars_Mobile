@@ -1,8 +1,8 @@
 diff --git a/node_modules/react-native-paper/src/components/SegmentedButtons/SegmentedButtonItem.tsx b/node_modules/react-native-paper/src/components/SegmentedButtons/SegmentedButtonItem.tsx
-index 26236f0..4fd0b2e 100644
+index d88f2a4..80e1d48 100644
 --- a/node_modules/react-native-paper/src/components/SegmentedButtons/SegmentedButtonItem.tsx
 +++ b/node_modules/react-native-paper/src/components/SegmentedButtons/SegmentedButtonItem.tsx
-@@ -237,7 +237,7 @@ const SegmentedButtonItem = ({
+@@ -251,7 +251,7 @@ const SegmentedButtonItem = ({
  const styles = StyleSheet.create({
    button: {
      flex: 1,
@@ -12,10 +12,10 @@ index 26236f0..4fd0b2e 100644
    },
    label: {
 diff --git a/node_modules/react-native-paper/src/components/Snackbar.tsx b/node_modules/react-native-paper/src/components/Snackbar.tsx
-index 388fc48..9f53289 100644
+index 2d552bb..b70c226 100644
 --- a/node_modules/react-native-paper/src/components/Snackbar.tsx
 +++ b/node_modules/react-native-paper/src/components/Snackbar.tsx
-@@ -328,6 +328,7 @@ const Snackbar = ({
+@@ -334,6 +334,7 @@ const Snackbar = ({
                  accessibilityRole="button"
                  borderless
                  onPress={onIconPress}
