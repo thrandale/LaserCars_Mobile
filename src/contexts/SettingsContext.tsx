@@ -59,6 +59,9 @@ export interface Settings {
   currentColor: SavedSetting<string>;
   snackBar: SnackBar;
   dialog: Dialog;
+  background: {
+    running: SavedSetting<boolean>;
+  };
   Reset: () => void;
 }
 
@@ -121,6 +124,9 @@ const SettingsContextProvider = (props: any) => {
       message: useSetting<string>(''),
       action: useSetting<() => void>(() => {}),
       Show: ShowDialog,
+    },
+    background: {
+      running: useSavedSetting<boolean>('backgroundRunning', true),
     },
   };
 

@@ -10,6 +10,7 @@ interface NativeBackgroundProps {
   minThickness: number;
   maxThickness: number;
   maxLasers: number;
+  running: boolean;
   style?: StyleProp<ViewStyle>;
 }
 

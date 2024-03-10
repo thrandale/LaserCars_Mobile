@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {useTheme} from 'react-native-paper';
 
 import NativeBackground from './NativeComponents/NativeBackground';
 import {StyleSheet} from 'react-native';
 import {rgbToHex} from '../Utils';
+import {SettingsContext} from '../contexts/SettingsContext';
 
 function Background() {
   const theme = useTheme();
@@ -14,6 +15,8 @@ function Background() {
   const speedRange = 5;
   const minThickness = 1;
   const maxThickness = 5;
+
+  const {running} = useContext(SettingsContext).background;
 
   const laserColors = [
     '#ff0000',
@@ -51,6 +54,7 @@ function Background() {
       minThickness={minThickness}
       maxThickness={maxThickness}
       maxLasers={maxLasers}
+      running={running.value}
     />
   );
   // }

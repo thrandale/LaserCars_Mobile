@@ -24,7 +24,7 @@ function Settings(props: {navigation: NavigationHelpers<any, any>}) {
       gap: 20,
     },
     button: {
-      width: 200,
+      width: 250,
       textAlign: 'center',
       zIndex: 1,
     },
@@ -48,6 +48,15 @@ function Settings(props: {navigation: NavigationHelpers<any, any>}) {
             props.navigation.navigate('ControlEditor');
           }}>
           Control Editor
+        </GlowingButton>
+        <GlowingButton
+          style={styles.button}
+          onPress={() => {
+            settings.background.running.setValue(
+              !settings.background.running.value,
+            );
+          }}>
+          Turn {settings.background.running.value ? 'Off' : 'On'} Animation
         </GlowingButton>
         <GlowingButton
           style={styles.button}
