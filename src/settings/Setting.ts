@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useState, useEffect} from 'react';
-import {Animated} from 'react-native';
 
 const USE_LOCAL_STORAGE = true;
 
@@ -50,8 +49,8 @@ export const useSetting = <T>(initialValue: T): MutableSetting<T> => {
 export const useSavedSetting = <T>(
   key: string,
   initialValue: T,
-): SavedSetting<T> => {
-  const [value, setValue] = useState<T>(initialValue);
+): SavedSetting<T | undefined> => {
+  const [value, setValue] = useState<T | undefined>();
 
   // Load setting from local storage
   useEffect(() => {
@@ -66,15 +65,17 @@ export const useSavedSetting = <T>(
       const item = await AsyncStorage.getItem(key);
       if (item) {
         setValue(JSON.parse(item));
+      } else {
+        setValue(initialValue);
       }
     };
 
     loadSetting();
-  }, [key]);
+  }, [key, initialValue]);
 
   // Save setting to local storage
   useEffect(() => {
-    if (!USE_LOCAL_STORAGE) {
+    if (!USE_LOCAL_STORAGE || value === undefined) {
       return;
     }
 
@@ -85,7 +86,7 @@ export const useSavedSetting = <T>(
     saveSetting();
   }, [key, value]);
 
-  const setSetting = (newValue: T) => {
+  const setSetting = (newValue: T | undefined) => {
     setValue(newValue);
   };
 

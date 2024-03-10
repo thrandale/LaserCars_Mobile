@@ -15,8 +15,9 @@ class DrawingThread(private var surfaceHolder: SurfaceHolder, private var skiaCa
 
     override fun run() {
         var canvas: Canvas?
+        var runOnce = false
 
-        while (isRunning) {
+        while (isRunning || !runOnce) {
             var elapsedTimeMs: Long
             val sleepTimeMs: Long
 
@@ -30,6 +31,7 @@ class DrawingThread(private var surfaceHolder: SurfaceHolder, private var skiaCa
                         val percentageOfFrame = elapsedTimeMs.toDouble() / (1000f / fps)
                         previousTime = System.currentTimeMillis()
                         skiaCanvas.update(percentageOfFrame, canvas)
+                        runOnce = true
                     }
                 }
             } catch (e: Exception) {

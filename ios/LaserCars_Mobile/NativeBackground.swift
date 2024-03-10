@@ -25,6 +25,7 @@ class NativeBackground: UIView {
   @objc var maxLasers: Int = 0 {
     didSet { initIfReady() }
   }
+  @objc var running: Bool = false
 
   public var width: CGFloat = UIScreen.main.bounds.width
   public var height: CGFloat = UIScreen.main.bounds.height
@@ -47,6 +48,11 @@ class NativeBackground: UIView {
   }
 
   @objc private func update() {
+    if (!running) {
+      lastFrameTimestamp = displayLink?.timestamp ?? 0
+      return
+    }
+
     let deltaTime = CGFloat(displayLink?.timestamp ?? 0) - CGFloat(lastFrameTimestamp)
 
     for laser in lasers {
@@ -92,13 +98,20 @@ class NativeBackground: UIView {
 
     init(nativeBackground: NativeBackground) {
       nb = nativeBackground
-      reset()
+
+      guard let nb = nb else { return }
+
+      length = Int.random(in: nb.minLength...nb.maxLength)
+      start = CGPoint(x: Int.random(in: 0...(Int(nb.width) + Int(nb.height))) - length - Int(nb.height), y: Int.random(in: 0...(Int(nb.height) + length)) - length)
+      color = UIColor(rgb: nb.laserColors[Int.random(in: 0..<nb.laserColors.count)] as! String)
+      speed = Int.random(in: 0...nb.speedRange) + nb.minSpeed
+      thickness = interpolateThickness()
     }
 
     func reset() {
       guard let nb = nb else { return }
 
-      length = Int.random(in: nb.minLength...nb.maxLength) + nb.minLength
+      length = Int.random(in: nb.minLength...nb.maxLength)
       start = CGPoint(x: Int.random(in: 0...(Int(nb.width) + Int(nb.height))) - length - Int(nb.height), y: -length)
       color = UIColor(rgb: nb.laserColors[Int.random(in: 0..<nb.laserColors.count)] as! String)
       speed = Int.random(in: 0...nb.speedRange) + nb.minSpeed

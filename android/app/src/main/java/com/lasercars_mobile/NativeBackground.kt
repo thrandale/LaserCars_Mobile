@@ -83,4 +83,9 @@ class NativeBackground(private val mCallerContext: ReactApplicationContext) : Si
             (view as SkiaCanvas).setLaserColors(colors)
         }
     }
+
+    @ReactProp(name = "running")
+    fun setPaused(view: SurfaceView, running: Boolean) {
+        (view as SkiaCanvas).setRunning(running)
+    }
 }

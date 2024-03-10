@@ -9,4 +9,5 @@
   RCT_EXPORT_VIEW_PROPERTY(minThickness, int);
   RCT_EXPORT_VIEW_PROPERTY(maxThickness, int);
   RCT_EXPORT_VIEW_PROPERTY(maxLasers, int);
+  RCT_EXPORT_VIEW_PROPERTY(running, BOOL);
 @end

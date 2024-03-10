@@ -57,7 +57,6 @@ function Background() {
       running={running.value}
     />
   );
-  // }
 }
 
 export default Background;

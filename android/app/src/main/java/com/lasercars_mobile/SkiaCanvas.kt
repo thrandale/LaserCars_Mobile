@@ -53,9 +53,7 @@ class SkiaCanvas(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
     }
 
     override fun surfaceCreated(surfaceHolder: SurfaceHolder) {
-        drawingThread = DrawingThread(surfaceHolder, this)
-        drawingThread?.setRunning(true)
-        drawingThread?.start()
+        // Do nothing
     }
 
     override fun surfaceChanged(surfaceHolder: SurfaceHolder, i: Int, i1: Int, i2: Int) {
@@ -140,10 +138,22 @@ class SkiaCanvas(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
         lasers.clear()
         for (i in 0 until maxLasers) {
             val length = random.nextInt(maxLength - minLength) + minLength
-            val start = Point(random.nextInt(width + height) - length - height, random.nextInt(height + length * 2) - length)
+            val start = Point(random.nextInt(width + height) - length - height, random.nextInt(height + length) - length)
             val speed = random.nextInt(speedRange) + minSpeed
 
             lasers.add(Laser(start, length, speed, colors!![random.nextInt(colors!!.size)]))
+        }
+    }
+
+    fun setRunning(running: Boolean) {
+        if (drawingThread == null) {
+            drawingThread = DrawingThread(holder, this)
+            drawingThread?.setRunning(running)
+            drawingThread?.start()
+        }
+        if (!running && drawingThread != null) {
+            drawingThread?.setRunning(false)
+            drawingThread = null
         }
     }
 
